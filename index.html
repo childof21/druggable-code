@@ -173,14 +173,44 @@ footer a{color:var(--accent);text-decoration:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .post,.course-card,.session-card{animation:fadeUp .4s ease}
 /* Responsive */
-@media(max-width:640px){
-  .header-inner{padding:16px}
-  .hero h1{font-size:28px}
+@media(max-width:768px){
+  body{font-size:14px}
+  .header-inner{padding:14px 16px}
+  .logo-text{font-size:14px}
+  .hero h1{font-size:30px;letter-spacing:-1px}
+  .hero .sub{font-size:14px}
   .container{padding:24px 16px 60px}
   .post{padding:20px}
   .post-title{font-size:16px}
   .course-card{padding:20px}
   .session-card{padding:16px}
+  .child-post{margin-right:12px}
+  .header-links button{padding:6px 12px;font-size:12px}
+}
+
+@media(max-width:480px){
+  .header-inner{padding:12px 14px;flex-wrap:wrap;gap:8px}
+  .logo-text{font-size:13px}
+  .logo-sub{font-size:9px}
+  .hero h1{font-size:24px;letter-spacing:-0.5px}
+  .hero .sub{font-size:13px;line-height:1.9}
+  .hero .sub-en{font-size:12px}
+  .container{padding:20px 12px 50px}
+  .post{padding:16px;margin-bottom:10px}
+  .post-header{flex-direction:column;align-items:flex-start;gap:4px}
+  .post-title{font-size:15px}
+  .post-content-inner p{font-size:13px}
+  .post-content-inner h3{font-size:14px}
+  .post-content-inner li{font-size:13px}
+  .post-content-inner table{font-size:11px}
+  .post-content-inner table th,
+  .post-content-inner table td{padding:6px 8px!important}
+  .child-post{margin-right:8px;padding:14px!important}
+  .author-badge{font-size:10px;padding:2px 8px}
+  .header-links{flex-wrap:wrap;justify-content:center}
+  .header-links button{padding:5px 10px;font-size:11px}
+  .theme-toggle{padding:5px 8px;font-size:13px}
+  .view-tab{padding:6px 14px;font-size:12px}
 }
 </style>
 </head>
@@ -189,7 +219,6 @@ footer a{color:var(--accent);text-decoration:none}
 <header>
 <div class="header-inner">
   <a class="logo" href="/">
-    <img src="/icon.png?v=3" alt="Druggable Code" class="logo-img">
     <div>
       <div class="logo-text">The <span>Druggable</span> Code</div>
       <div class="logo-sub">ایمونولوژی · مهندسی دارو · هوش مصنوعی</div>
