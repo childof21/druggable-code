@@ -1,0 +1,15 @@
+[Unit]
+Description=Druggable Code Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=mohammad
+WorkingDirectory=/home/mohammad/druggable-code-bot
+ExecStart=/usr/bin/python3 /home/mohammad/druggable-code-bot/bot.py
+Restart=always
+RestartSec=10
+EnvironmentFile=/home/mohammad/druggable-code-bot/.env
+
+[Install]
+WantedBy=multi-user.target

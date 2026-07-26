@@ -1,0 +1,15 @@
+# Bot config
+.env
+bot.log
+__pycache__/
+*.pyc
+
+# Vercel
+.vercel/
+.vercel
+.env.local
+.env.development.local
+
+# OS
+.DS_Store
+Thumbs.db
