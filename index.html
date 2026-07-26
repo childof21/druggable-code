@@ -1,38 +1,38 @@
-1|<!DOCTYPE html>
-2|<html lang="fa" dir="rtl">
-3|<head>
-4|<meta charset="UTF-8">
-5|<meta name="viewport" content="width=device-width, initial-scale=1.0">
-6|<title>The Druggable Code</title>
-7|<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
-8|<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=3">
-9|<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=3">
-10|<link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
-11|<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
-12|<link rel="manifest" href="/site.webmanifest">
-13|<meta property="og:title" content="The Druggable Code">
-14|<meta property="og:description" content="یادداشت‌های یک پزشک در مسیر درک عمیق ایمونولوژی، مهندسی دارو و هوش مصنوعی">
-15|<meta property="og:image" content="https://druggable-code.vercel.app/og-image.jpg">
-16|<meta property="og:type" content="website">
-17|<link rel="preconnect" href="https://fonts.googleapis.com">
-18|<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-19|<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-20|<style>
-21|@font-face {
-22|  font-family: 'Peyda';
-23|  src: url('/PeydaWeb-Regular.woff2') format('woff2');
-24|  font-weight: 400;
-25|  font-style: normal;
-26|  font-display: swap;
-27|}
-28|@font-face {
-29|  font-family: 'Peyda';
-30|  src: url('/PeydaWeb-Bold.woff2') format('woff2');
-31|  font-weight: 700;
-32|  font-style: normal;
-33|  font-display: swap;
-34|}
-35|:root {
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Druggable Code</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=3">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=3">
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:title" content="The Druggable Code">
+<meta property="og:description" content="یادداشت‌های یک پزشک در مسیر درک عمیق ایمونولوژی، مهندسی دارو و هوش مصنوعی">
+<meta property="og:image" content="https://druggable-code.vercel.app/og-image.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'Peyda';
+  src: url('/PeydaWeb-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('/PeydaWeb-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
   --bg: #020202;
   --bg2: #0a0a0e;
   --bg3: #121218;
@@ -71,494 +71,493 @@
   --radius: 16px;
   --radius-sm: 10px;
 }*{margin:0;padding:0;box-sizing:border-box}
-68|html{scroll-behavior:smooth}
-69|body{font-family:var(--font-fa);background:var(--bg);color:var(--text);line-height:1.9;min-height:100vh;transition:background .3s,color .3s;font-size:15px;font-weight:400}
-70|::selection{background:var(--accent);color:var(--bg)}
-71|/* Header */
-72|header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-73|.header-inner{max-width:840px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
-74|.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-75|.logo-img{width:40px;height:40px;object-fit:cover;border-radius:var(--radius-sm)}
-76|.logo-text{font-size:16px;font-weight:700;font-family:var(--font-en);color:var(--text);letter-spacing:-0.3px;line-height:1.3}
-77|.logo-text span{background:linear-gradient(135deg,var(--accent),#a0e8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-78|.logo-sub{font-size:10px;color:var(--text3);font-family:var(--font-fa);margin-top:-1px;text-align:left}
-79|.header-links{display:flex;align-items:center;gap:2px}
-80|.header-links button{padding:8px 16px;font-size:13px;color:var(--text2);text-decoration:none;transition:.2s;font-family:var(--font-en);background:none;cursor:pointer;border:none;border-radius:var(--radius-sm);font-weight:500}
-81|.header-links button:hover{color:var(--text);background:var(--bg3)}
-82|.header-links button.active{color:var(--accent);background:var(--accent-dim)}
-83|/* Theme Toggle */
-84|.theme-toggle{background:var(--bg3);border:none;padding:7px 10px;cursor:pointer;font-size:15px;color:var(--text2);transition:.2s;line-height:1;margin-right:4px;border-radius:var(--radius-sm)}
-85|.theme-toggle:hover{background:var(--border);color:var(--text)}
-86|/* Main */
-87|.container{max-width:840px;margin:0 auto;padding:40px 24px 80px}
-88|/* View Tabs */
-89|.view-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:var(--radius-sm);border:1px solid var(--border)}
-90|.view-tab{padding:8px 20px;font-size:13px;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:.2s;font-family:var(--font-en);font-weight:500;border-radius:8px}
-91|.view-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
-92|.view-tab:not(.active):hover{color:var(--text)}
-93|/* Hero */
-94|.hero{margin-bottom:48px;padding:0}
-95|.hero h1{font-size:40px;font-weight:800;line-height:1.15;margin-bottom:12px;letter-spacing:-1.5px;font-family:var(--font-en);text-align:left;direction:ltr}
-96|.hero h1 span{background:linear-gradient(135deg,var(--accent),#a0e8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-97|.hero .sub{color:var(--text2);font-size:15px;font-family:var(--font-fa);line-height:2;text-align:left;max-width:600px}
-98|.hero .sub-en{color:var(--text3);font-size:13px;font-family:var(--font-en);margin-top:6px;text-align:left;direction:ltr;font-weight:400}
-99|/* Stats */
-100|.stats{display:flex;gap:28px;margin-bottom:44px;flex-wrap:wrap}
-101|.stat{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:13px;font-family:var(--font-en)}
-102|.stat-num{color:var(--accent);font-weight:700;font-family:var(--font-en);font-size:15px}
-103|/* Posts header */
-104|.posts-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-105|.posts-header h2{font-size:14px;font-weight:600;color:var(--text3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:1.5px}
-106|.filter-group{display:flex;gap:6px;flex-wrap:wrap}
-107|.filter-btn{padding:6px 14px;font-size:12px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:.2s;font-family:var(--font-fa);border-radius:20px}
-108|.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
-109|.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
-110|/* Post card */
-111|.post{background:var(--card);border:1px solid var(--border);padding:24px 28px;margin-bottom:14px;transition:.2s;cursor:pointer;border-radius:var(--radius)}
-112|.post:hover{border-color:var(--accent);background:var(--bg2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
-113|.post-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
-114|.post-tags{display:flex;gap:6px;flex-wrap:wrap}
-115|.post-tag{font-size:10px;padding:3px 10px;background:var(--accent-dim);color:var(--accent);font-family:var(--font-en);font-weight:500;border-radius:20px;letter-spacing:0.3px;text-transform:uppercase}
-116|.post-date{font-size:12px;color:var(--text3);font-family:var(--font-en);font-weight:400;white-space:nowrap}
-117|.post-title{font-size:18px;font-weight:700;margin-bottom:4px;line-height:1.5;color:var(--text);font-family:var(--font-fa)}
-118|.post-title-en{font-size:13px;color:var(--text3);font-family:var(--font-en);margin-bottom:12px;font-weight:400}
-119|.post-author{margin-bottom:10px}
-120|.author-badge{display:inline-block;font-size:11px;color:var(--accent);background:var(--tag-bg);padding:3px 10px;border-radius:20px;font-family:var(--font-fa);font-weight:500}
-121|.post-content{overflow:hidden;transition:max-height .4s ease}
-122|.post-content.closed{max-height:0}
-123|.post-content.open{max-height:none}
-124|.post-content-inner{padding-top:16px;border-top:1px solid var(--border)}
-125|.post-content-inner h3{font-size:16px;font-weight:700;margin:20px 0 10px;color:var(--accent)}
-126|.post-content-inner h3:first-child{margin-top:0}
-127|.post-content-inner p{font-size:14px;color:var(--text2);margin-bottom:12px;line-height:2}
-128|.post-content-inner p .en{font-family:var(--font-en);color:var(--text3)}
-129|.post-content-inner p strong,.post-content-inner li strong{color:var(--text);font-weight:700}
-130|.post-content-inner p .tag{display:inline-block;font-size:11px;padding:2px 8px;background:var(--tag-bg);color:var(--tag-text);font-family:var(--font-en);border:1px solid var(--accent);font-weight:500;margin:0 2px}
-131|.post-content-inner p .dim{color:var(--text3);font-size:12px;font-family:var(--font-en)}
-132|.post-content-inner p .hl{color:var(--accent);font-weight:600}
-133|.post-content-inner p .w{color:var(--text);font-weight:500}
-134|.post-content-inner p code{font-family:var(--font-en);background:var(--bg3);padding:2px 6px;font-size:12px;border:1px solid var(--border);color:var(--accent)}
-135|.post-content-inner p mark{background:var(--tag-bg);color:var(--accent);padding:1px 4px;border-radius:3px}
-136|.post-content-inner ul{margin:8px 0 16px;padding-right:20px}
-137|.post-content-inner li{font-size:14px;color:var(--text2);margin-bottom:6px;line-height:2}
-138|.post-content-inner li .en{font-family:var(--font-en);color:var(--text3)}
-139|.post-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--accent);font-family:var(--font-en);font-weight:500;cursor:pointer;transition:.2s;background:none;border:none;padding:4px 0}
-140|.post-toggle:hover{color:var(--accent2)}
-141|/* Sub-post (child) styling */
-142|.post.child-post{margin-right:24px;border-color:var(--border);border-style:dashed;background:var(--bg2)}
-143|.post.child-post:hover{border-color:var(--text3);background:var(--bg3)}
-144|.post .parent-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-en);margin-bottom:6px;padding:3px 8px;background:var(--bg3);border:1px solid var(--border)}
-145|.post .parent-badge a{color:var(--accent);text-decoration:none}
-146|.post .parent-badge a:hover{text-decoration:underline}
-147|.post .child-count{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-en);margin-right:8px}
-148|/* Course cards */
-149|.course-card{background:var(--card);border:2px solid var(--border);padding:24px 28px;margin-bottom:16px;cursor:pointer;transition:.2s}
-150|.course-card:hover{border-color:var(--accent);background:var(--bg2)}
-151|.course-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
-152|.course-name{font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-en)}
-153|.course-meta{font-size:12px;color:var(--text3);font-family:var(--font-en);display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
-154|.course-session-count{font-size:13px;color:var(--accent);font-family:var(--font-en)}
-155|.session-card{background:var(--bg2);border:1px dashed var(--border);padding:20px 24px;margin-bottom:10px;cursor:pointer;transition:.2s}
-156|.session-card:hover{border-color:var(--text3);background:var(--bg3)}
-157|.session-card .post-content.closed{max-height:0}
-158|.session-card .post-content.open{max-height:none}
-159|/* Empty state */
-160|.empty{text-align:center;padding:60px 20px;color:var(--text3)}
-161|.empty p{font-size:15px;margin-bottom:4px}
-162|.empty .sub{font-size:13px;font-family:var(--font-en)}
-163|/* Footer */
-164|footer{text-align:center;padding:32px 24px;border-top:1px solid var(--border);color:var(--text3);font-size:12px;font-family:var(--font-en)}
-165|footer a{color:var(--accent);text-decoration:none}
-166|/* Animations */
-167|@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-168|.post,.course-card,.session-card{animation:fadeUp .4s ease}
-169|/* Responsive */
-170|@media(max-width:640px){
-171|  .header-inner{padding:16px}
-172|  .hero h1{font-size:28px}
-173|  .container{padding:24px 16px 60px}
-174|  .post{padding:20px}
-175|  .post-title{font-size:16px}
-176|  .course-card{padding:20px}
-177|  .session-card{padding:16px}
-178|}
-179|</style>
-180|</head>
-181|<body>
-182|
-183|<header>
-184|<div class="header-inner">
-185|  <a class="logo" href="/">
-186|    <img src="/icon.png?v=3" alt="Druggable Code" class="logo-img">
-187|    <div>
-188|      <div class="logo-text">The <span>Druggable</span> Code</div>
-189|      <div class="logo-sub">ایمونولوژی · مهندسی دارو · هوش مصنوعی</div>
-190|    </div>
-191|  </a>
-192|  <div class="header-links">
-193|    <button onclick="switchView('home')" id="nav-home">Home</button>
-194|    <button onclick="switchView('courses')" id="nav-courses">Courses</button>
-195|    <a href="https://github.com/dr-afshari" target="_blank" style="padding:8px 14px;font-size:13px;color:var(--text2);text-decoration:none;transition:.2s;font-family:var(--font-en);border:1px solid transparent">GitHub</a>
-196|    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="تغییر تم">🌙</button>
-197|  </div>
-198|</div>
-199|</header>
-200|
-201|<div class="container" id="main-container">
-202|  <!-- Hero -->
-203|  <div class="hero">
-204|    <h1>The <span>Druggable</span> Code</h1>
-205|    <div class="sub">یادداشت‌های یک پزشک در مسیر درک عمیق ایمونولوژی، مهندسی دارو و هوش مصنوعی</div>
-206|    <div class="sub-en">A physician's notes on the path to deep understanding of immunology, drug engineering, and AI</div>
-207|  </div>
-208|
-209|  <!-- View Tabs -->
-210|  <div class="view-tabs">
-211|    <button class="view-tab active" onclick="switchView('home')" id="tab-home">Posts</button>
-212|    <button class="view-tab" onclick="switchView('courses')" id="tab-courses">Courses</button>
-213|  </div>
-214|
-215|  <!-- Content area -->
-216|  <div id="posts-container"></div>
-217|</div>
-218|
-219|<footer>
-220|  <p>&copy; 2025 <a href="/">The Druggable Code</a> &middot; Built with curiosity &middot; Dr. Mohamad Afshari</p>
-221|</footer>
-222|
-223|<script>
-224|let posts = [];
-225|let courses = [];
-226|let allTags = new Set();
-227|let currentView = 'home';
-228|let expandedCourseId = null;
-229|let expandedSessionId = null;
-230|
-231|// Theme toggle
-232|function toggleTheme() {
-233|  const html = document.documentElement;
-234|  const btn = document.getElementById('themeBtn');
-235|  if (html.getAttribute('data-theme') === 'light') {
-236|    html.removeAttribute('data-theme');
-237|    btn.textContent = '\u{1F319}';
-238|    localStorage.setItem('dc_theme', 'dark');
-239|  } else {
-240|    html.setAttribute('data-theme', 'light');
-241|    btn.textContent = '\u{2600}\u{FE0F}';
-242|    localStorage.setItem('dc_theme', 'light');
-243|  }
-244|}
-245|const savedTheme = localStorage.getItem('dc_theme');
-246|if (savedTheme === 'light') {
-247|  document.documentElement.setAttribute('data-theme', 'light');
-248|  document.getElementById('themeBtn').textContent = '\u{2600}\u{FE0F}';
-249|}
-250|
-251|function switchView(view) {
-252|  currentView = view;
-253|  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-254|  document.querySelectorAll('.header-links button').forEach(b => b.classList.remove('active'));
-255|  document.getElementById('tab-' + view).classList.add('active');
-256|  document.getElementById('nav-' + view).classList.add('active');
-257|  if (view === 'home') renderHomeView();
-258|  else renderCoursesView();
-259|}
-260|
-261|async function loadData() {
-262|  try {
-263|    const r1 = await fetch('/posts.json?' + Date.now());
-264|    posts = await r1.json();
-265|  } catch(e) {
-266|    posts = [];
-267|  }
-268|  try {
-269|    const r2 = await fetch('/courses.json?' + Date.now());
-270|    courses = await r2.json();
-271|  } catch(e) {
-272|    courses = [];
-273|  }
-274|  renderHomeView();
-275|}
-276|
-277|/* ============ HOME VIEW ============ */
-278|function renderHomeView() {
-279|  const container = document.getElementById('posts-container');
-280|  allTags = new Set();
-281|  posts.forEach(p => p.tags.forEach(t => allTags.add(t)));
-282|  posts.sort((a, b) => b.id - a.id);
-283|
-284|  // Stats
-285|  const parentCount = posts.filter(p => !p.parentId).length;
-286|  let html = '<div class="stats">';
-287|  html += '<div class="stat"><span class="stat-num">' + posts.length + '</span> posts</div>';
-288|  html += '<div class="stat"><span class="stat-num">' + parentCount + '</span> series</div>';
-289|  html += '<div class="stat"><span class="stat-num">' + allTags.size + '</span> tags</div>';
-290|  html += '<div class="stat">\u{270F}\u{FE0F} <span class="stat-num">Dr. Mohamad Afshari</span></div>';
-291|  html += '</div>';
-292|
-293|  // Filter
-294|  html += '<div class="posts-header"><h2>Posts</h2><div class="filter-group" id="filter-group">';
-295|  html += '<button class="filter-btn active" onclick="filterPosts(\'all\')">All</button>';
-296|  allTags.forEach(tag => {
-297|    html += '<button class="filter-btn" onclick="filterPosts(\'' + tag + '\')">' + tag + '</button>';
-298|  });
-299|  html += '</div></div>';
-300|
-301|  container.innerHTML = html + '<div id="posts-list"></div>';
-302|  renderPosts('all');
-303|}
-304|
-305|function filterPosts(tag) {
-306|  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-307|  document.querySelectorAll('.filter-btn').forEach(b => {
-308|    if ((tag === 'all' && b.textContent === 'All') || b.textContent === tag) {
-309|      b.classList.add('active');
-310|    }
-311|  });
-312|  renderPosts(tag);
-313|}
-314|
-315|function renderPosts(filter) {
-316|  const listEl = document.getElementById('posts-list');
-317|  if (!listEl) return;
-318|  let filtered = filter === 'all' ? posts : posts.filter(p => p.tags.includes(tag));
-319|
-320|  const children = {};
-321|  const parentPosts = {};
-322|  posts.forEach(p => {
-323|    parentPosts[p.id] = p;
-324|    if (p.parentId) {
-325|      if (!children[p.parentId]) children[p.parentId] = [];
-326|      children[p.parentId].push(p);
-327|    }
-328|  });
-329|
-330|  if (filtered.length === 0) {
-331|    listEl.innerHTML = '<div class="empty"><p>\u{0647}\u{06CC}\u{0686} \u{067E}\u{0633}\u{062A}\u{06CC} \u{0628}\u{0627} \u{0627}\u{06CC}\u{0646} \u{0628}\u{0631}\u{0686}\u{0633}\u{0628} \u{06CC}\u{0627}\u{0641}\u{062A} \u{0646}\u{0634}\u{062F}</p><div class="sub">No posts found with this tag</div></div>';
-332|    return;
-333|  }
-334|
-335|  const filteredParents = filtered.filter(p => !p.parentId);
-336|  const filteredChildIds = new Set(filtered.filter(p => p.parentId).map(p => p.id));
-337|
-338|  let displayParents = [...filteredParents];
-339|  let displayChildIds = new Set(filteredChildIds);
-340|
-341|  if (filter !== 'all') {
-342|    filtered.filter(p => p.parentId).forEach(child => {
-343|      if (!displayParents.find(pp => pp.id === child.parentId)) {
-344|        const parent = parentPosts[child.parentId];
-345|        if (parent) displayParents.push(parent);
-346|      }
-347|    });
-348|  }
-349|
-350|  displayParents.sort((a, b) => b.id - a.id);
-351|
-352|  listEl.innerHTML = displayParents.map(parent => {
-353|    const childPosts = (children[parent.id] || []).sort((a, b) => b.id - a.id);
-354|    const hasChildren = childPosts.length > 0;
-355|    const isChildMatched = filter !== 'all' && childPosts.some(c => filteredChildIds.has(c.id));
-356|
-357|    if (filter !== 'all' && !filteredParents.includes(parent) && !isChildMatched) return '';
-358|    if (filter !== 'all' && !filteredParents.includes(parent) && !isChildMatched) return '';
-359|
-360|    let parentHtml = buildPostHtml(parent);
-361|    if (hasChildren) {
-362|      const badge = '<span class="child-count">\u{1F4CE} ' + childPosts.length + '</span>';
-363|      parentHtml = parentHtml.replace(
-364|        '<div class="post-title">' + parent.title + '</div>',
-365|        '<div class="post-title">' + parent.title + '</div>' + badge
-366|      );
-367|    }
-368|
-369|    const childrenHtml = childPosts.map(child => {
-370|      if (filter !== 'all' && !child.tags.includes(filter) && child.id !== parent.id) {
-371|        if (!filteredParents.includes(parent) && !filteredChildIds.has(child.id)) return '';
-372|      }
-373|      const childContent = renderContent(child.content);
-374|      const childContentBlock = child.content.length > 0
-375|        ? '<div class="post-content closed"><div class="post-content-inner">' + childContent + '</div></div><button class="post-toggle" onclick="event.stopPropagation();togglePost(this.parentElement)"><span class="toggle-text">Read more</span> \u{2193}</button>'
-376|        : '';
-377|      return '<div class="post child-post" onclick="togglePost(this)">'
-378|        + '<div class="parent-badge">\u{1F4CE} Part of <a href="#" onclick="event.stopPropagation();filterPosts(\'all\')">#' + parent.id + '</a></div>'
-379|        + '<div class="post-header"><div class="post-tags">' + child.tags.map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div><span class="post-date">' + child.date + '</span></div>'
-380|        + '<div class="post-title">' + child.title + '</div>'
-381|        + (child.titleEn ? '<div class="post-title-en">' + child.titleEn + '</div>' : '')
-382|        + childContentBlock + '</div>';
-383|    }).filter(h => h !== '').join('');
-384|
-385|    return parentHtml + childrenHtml;
-386|  }).filter(h => h !== '').join('');
-387|}
-388|
-389|/* ============ COURSES VIEW ============ */
-390|function renderCoursesView() {
-391|  const container = document.getElementById('posts-container');
-392|  if (!courses.length) {
-393|    container.innerHTML = '<div class="stats"><div class="stat"><span class="stat-num">0</span> courses</div></div>'
-394|      + '<div class="empty"><p>\u{0647}\u{06CC}\u{0686} \u{062F}\u{0648}\u{0631}\u{0647}\u{200C}\u{0627}\u{06CC} \u{062B}\u{0628}\u{062A} \u{0646}\u{0634}\u{062F}\u{0647}</p><div class="sub">No courses added yet</div></div>';
-395|    return;
-396|  }
-397|
-398|  let html = '<div class="stats">';
-399|  html += '<div class="stat"><span class="stat-num">' + courses.length + '</span> courses</div>';
-400|  const totalSessions = courses.reduce((sum, c) => sum + c.sessions.length, 0);
-401|  html += '<div class="stat"><span class="stat-num">' + totalSessions + '</span> sessions</div>';
-402|  html += '</div>';
-403|
-404|  html += '<div class="posts-header"><h2>Course Notes</h2></div>';
-405|
-406|  courses.sort((a, b) => b.id - a.id).forEach(course => {
-407|    const isExpanded = expandedCourseId === course.id;
-408|    const sessionCount = course.sessions.length;
-409|
-410|    html += '<div class="course-card" onclick="toggleCourse(' + course.id + ')">';
-411|    html += '<div class="course-card-header">';
-412|    html += '<div>';
-413|    html += '<div class="course-name">' + course.name + '</div>';
-414|    html += '<div class="course-meta">';
-415|    html += '<span>' + course.instructor + '</span>';
-416|    html += '<span>' + course.language + '</span>';
-417|    html += '<span>' + course.totalSessions + ' sessions</span>';
-418|    if (course.nameFa) html += '<span>' + course.nameFa + '</span>';
-419|    html += '</div></div>';
-420|    html += '<div class="course-session-count">' + sessionCount + ' session' + (sessionCount > 1 ? 's' : '') + ' \u{2193}</div>';
-421|    html += '</div>';
-422|
-423|    if (isExpanded) {
-424|      html += '<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">';
-425|      course.sessions.sort((a, b) => a.sessionNum - b.sessionNum).forEach(session => {
-426|        const sessExpanded = expandedSessionId === session.id;
-427|        const contentHtml = renderContent(session.content);
-428|
-429|        html += '<div class="session-card" onclick="event.stopPropagation();toggleSession(' + session.id + ')">';
-430|        html += '<div class="post-header">';
-431|        html += '<div class="post-tags">' + (course.tags || []).map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div>';
-432|        html += '<span class="post-date">' + session.date + ' \u{2022} Class ' + session.sessionNum + '</span>';
-433|        html += '</div>';
-434|        html += '<div class="post-title" style="font-size:15px">' + session.title + '</div>';
-435|        if (session.titleEn) html += '<div class="post-title-en">' + session.titleEn + '</div>';
-436|        if (session.videoUrl) {
-437|          html += '<a href="' + session.videoUrl + '" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;font-family:var(--font-en);margin-bottom:8px" onclick="event.stopPropagation()">'
-438|            + '\u{25B6} Watch on YouTube</a>';
-439|        }
-440|        html += '<div class="post-content ' + (sessExpanded ? 'open' : 'closed') + '">';
-441|        html += '<div class="post-content-inner">' + contentHtml + '</div></div>';
-442|        html += '<button class="post-toggle" onclick="event.stopPropagation();toggleSession(' + session.id + ')">';
-443|        html += '<span class="toggle-text">' + (sessExpanded ? 'Close' : 'Read more') + '</span> ' + (sessExpanded ? '\u{2191}' : '\u{2193}');
-444|        html += '</button></div>';
-445|      });
-446|      html += '</div>';
-447|    }
-448|    html += '</div>';
-449|  });
-450|
-451|  container.innerHTML = html;
-452|}
-453|
-454|function toggleCourse(id) {
-455|  if (window.getSelection().toString().length > 0) return;
-456|  expandedCourseId = expandedCourseId === id ? null : id;
-457|  expandedSessionId = null;
-458|  renderCoursesView();
-459|}
-460|
-461|function toggleSession(id) {
-462|  if (window.getSelection().toString().length > 0) return;
-463|  expandedSessionId = expandedSessionId === id ? null : id;
-464|  renderCoursesView();
-465|}
-466|
-467|/* ============ SHARED ============ */
-468|function buildPostHtml(post) {
-469|  const contentHtml = renderContent(post.content);
-470|  const hasContent = post.content && post.content.length > 0;
-471|  return '<div class="post" onclick="togglePost(this)">'
-472|    + '<div class="post-header"><div class="post-tags">' + post.tags.map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div><span class="post-date">' + post.date + '</span></div>'
-473|    + '<div class="post-title">' + post.title + '</div>'
-474|    + (post.author ? '<div class="post-author"><span class="author-badge">👤 ' + post.author + '</span></div>' : '')
-475|    + (post.titleEn ? '<div class="post-title-en">' + post.titleEn + '</div>' : '')
-476|    + (hasContent
-477|      ? '<div class="post-content closed"><div class="post-content-inner">' + contentHtml + '</div></div><button class="post-toggle" onclick="event.stopPropagation();togglePost(this.parentElement)"><span class="toggle-text">Read more</span> \u{2193}</button>'
-478|      : '<div style="font-size:12px;color:var(--text3);margin-top:8px;font-family:var(--font-en)">\u{23F3} Coming soon...</div>')
-479|    + '</div>';
-480|}
-481|
-482|function renderContent(content) {
-483|  if (!content || !Array.isArray(content)) return '';
-484|  return content.map(block => {
-485|    switch(block.type) {
-486|      case 'p':
-487|        if (block.fa && block.en) {
-488|          return '<p>' + block.fa + '</p><p><span class="en">' + block.en + '</span></p>';
-489|        }
-490|        return '<p>' + (block.fa || block.en || '') + '</p>';
-491|      case 'h3':
-492|        return '<h3>' + (block.fa || block.en || '') + '</h3>';
-493|      case 'img':
-494|        return '<div style="margin:20px 0"><img src="' + block.src + '" alt="' + (block.alt||'') + '" style="max-width:100%;border:2px solid var(--border)">' + (block.caption ? '<p style="font-size:12px;color:var(--text3);margin-top:6px;font-family:var(--font-en)">' + block.caption + '</p>' : '') + '</div>';
-495|      case 'ul': {
-496|        let h = '<ul>';
-497|        if (Array.isArray(block.fa)) {
-498|          block.fa.forEach(li => { h += '<li>' + li + '</li>'; });
-499|        } else if (typeof block.fa === 'string') {
-500|          block.fa.split('\n').filter(l => l.trim()).forEach(li => { h += '<li>' + li + '</li>'; });
-501|        }
-502|        if (block.en) {
-503|          if (Array.isArray(block.en)) {
-504|            block.en.forEach(li => { h += '<li><span class="en">' + li + '</span></li>'; });
-505|          } else if (typeof block.en === 'string') {
-506|            block.en.split('\n').filter(l => l.trim()).forEach(li => { h += '<li><span class="en">' + li + '</span></li>'; });
-507|          }
-508|        }
-509|        h += '</ul>';
-510|        return h;
-511|      }
-512|      case 'table': {
-513|        let t = '<div style="overflow-x:auto;margin:16px 0"><table dir="rtl" style="width:100%;border-collapse:collapse;font-size:13px">';
-514|        if (block.fa && block.fa.headers) {
-515|          t += '<thead><tr>';
-516|          block.fa.headers.forEach(th => { t += '<th style="background:var(--accent);color:#fff;padding:10px 12px;border:1px solid var(--border);text-align:center;font-weight:600">' + th + '</th>'; });
-517|          t += '</tr></thead>';
-518|        }
-519|        if (block.fa && block.fa.rows) {
-520|          t += '<tbody>';
-521|          block.fa.rows.forEach((row, ri) => {
-522|            t += '<tr' + (ri % 2 === 1 ? ' style="background:var(--bg2)"' : '') + '>';
-523|            row.forEach(td => { t += '<td dir="auto" style="padding:10px 12px;border:1px solid var(--border);color:var(--text2);text-align:right">' + td + '</td>'; });
-524|            t += '</tr>';
-525|          });
-526|          t += '</tbody>';
-527|        }
-528|        t += '</table></div>';
-529|        return t;
-530|      }
-531|      default:
-532|        return '';
-533|    }
-534|  }).join('');
-535|}
-536|
-537|function togglePost(el) {
-538|  if (window.getSelection().toString().length > 0) return;
-539|  const content = el.querySelector('.post-content');
-540|  const toggle = el.querySelector('.post-toggle');
-541|  if (!content || !toggle) return;
-542|  const isOpen = content.classList.contains('open');
-543|  if (isOpen) {
-544|    content.classList.remove('open');
-545|    content.classList.add('closed');
-546|    toggle.innerHTML = '<span class="toggle-text">Read more</span> \u{2193}';
-547|  } else {
-548|    content.classList.remove('closed');
-549|    content.classList.add('open');
-550|    toggle.innerHTML = '<span class="toggle-text">Close</span> \u{2191}';
-551|  }
-552|}
-553|
-554|loadData();
-555|</script>
-556|</body>
-557|</html>
-558|
+html{scroll-behavior:smooth}
+body{font-family:var(--font-fa);background:var(--bg);color:var(--text);line-height:1.9;min-height:100vh;transition:background .3s,color .3s;font-size:15px;font-weight:400}
+::selection{background:var(--accent);color:var(--bg)}
+/* Header */
+header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.header-inner{max-width:840px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-img{width:40px;height:40px;object-fit:cover;border-radius:var(--radius-sm)}
+.logo-text{font-size:16px;font-weight:700;font-family:var(--font-en);color:var(--text);letter-spacing:-0.3px;line-height:1.3}
+.logo-text span{background:linear-gradient(135deg,var(--accent),#a0e8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:10px;color:var(--text3);font-family:var(--font-fa);margin-top:-1px;text-align:left}
+.header-links{display:flex;align-items:center;gap:2px}
+.header-links button{padding:8px 16px;font-size:13px;color:var(--text2);text-decoration:none;transition:.2s;font-family:var(--font-en);background:none;cursor:pointer;border:none;border-radius:var(--radius-sm);font-weight:500}
+.header-links button:hover{color:var(--text);background:var(--bg3)}
+.header-links button.active{color:var(--accent);background:var(--accent-dim)}
+/* Theme Toggle */
+.theme-toggle{background:var(--bg3);border:none;padding:7px 10px;cursor:pointer;font-size:15px;color:var(--text2);transition:.2s;line-height:1;margin-right:4px;border-radius:var(--radius-sm)}
+.theme-toggle:hover{background:var(--border);color:var(--text)}
+/* Main */
+.container{max-width:840px;margin:0 auto;padding:40px 24px 80px}
+/* View Tabs */
+.view-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.view-tab{padding:8px 20px;font-size:13px;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:.2s;font-family:var(--font-en);font-weight:500;border-radius:8px}
+.view-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.view-tab:not(.active):hover{color:var(--text)}
+/* Hero */
+.hero{margin-bottom:48px;padding:0}
+.hero h1{font-size:40px;font-weight:800;line-height:1.15;margin-bottom:12px;letter-spacing:-1.5px;font-family:var(--font-en);text-align:left;direction:ltr}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),#a0e8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{color:var(--text2);font-size:15px;font-family:var(--font-fa);line-height:2;text-align:left;max-width:600px}
+.hero .sub-en{color:var(--text3);font-size:13px;font-family:var(--font-en);margin-top:6px;text-align:left;direction:ltr;font-weight:400}
+/* Stats */
+.stats{display:flex;gap:28px;margin-bottom:44px;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:13px;font-family:var(--font-en)}
+.stat-num{color:var(--accent);font-weight:700;font-family:var(--font-en);font-size:15px}
+/* Posts header */
+.posts-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.posts-header h2{font-size:14px;font-weight:600;color:var(--text3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:1.5px}
+.filter-group{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;font-size:12px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:.2s;font-family:var(--font-fa);border-radius:20px}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+/* Post card */
+.post{background:var(--card);border:1px solid var(--border);padding:24px 28px;margin-bottom:14px;transition:.2s;cursor:pointer;border-radius:var(--radius)}
+.post:hover{border-color:var(--accent);background:var(--bg2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.post-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.post-tags{display:flex;gap:6px;flex-wrap:wrap}
+.post-tag{font-size:10px;padding:3px 10px;background:var(--accent-dim);color:var(--accent);font-family:var(--font-en);font-weight:500;border-radius:20px;letter-spacing:0.3px;text-transform:uppercase}
+.post-date{font-size:12px;color:var(--text3);font-family:var(--font-en);font-weight:400;white-space:nowrap}
+.post-title{font-size:18px;font-weight:700;margin-bottom:4px;line-height:1.5;color:var(--text);font-family:var(--font-fa)}
+.post-title-en{font-size:13px;color:var(--text3);font-family:var(--font-en);margin-bottom:12px;font-weight:400}
+.post-author{margin-bottom:10px}
+.author-badge{display:inline-block;font-size:11px;color:var(--accent);background:var(--tag-bg);padding:3px 10px;border-radius:20px;font-family:var(--font-fa);font-weight:500}
+.post-content{overflow:hidden;transition:max-height .4s ease}
+.post-content.closed{max-height:0}
+.post-content.open{max-height:none}
+.post-content-inner{padding-top:16px;border-top:1px solid var(--border)}
+.post-content-inner h3{font-size:16px;font-weight:700;margin:20px 0 10px;color:var(--accent)}
+.post-content-inner h3:first-child{margin-top:0}
+.post-content-inner p{font-size:14px;color:var(--text2);margin-bottom:12px;line-height:2}
+.post-content-inner p .en{font-family:var(--font-en);color:var(--text3)}
+.post-content-inner p strong,.post-content-inner li strong{color:var(--text);font-weight:700}
+.post-content-inner p .tag{display:inline-block;font-size:11px;padding:2px 8px;background:var(--tag-bg);color:var(--tag-text);font-family:var(--font-en);border:1px solid var(--accent);font-weight:500;margin:0 2px}
+.post-content-inner p .dim{color:var(--text3);font-size:12px;font-family:var(--font-en)}
+.post-content-inner p .hl{color:var(--accent);font-weight:600}
+.post-content-inner p .w{color:var(--text);font-weight:500}
+.post-content-inner p code{font-family:var(--font-en);background:var(--bg3);padding:2px 6px;font-size:12px;border:1px solid var(--border);color:var(--accent)}
+.post-content-inner p mark{background:var(--tag-bg);color:var(--accent);padding:1px 4px;border-radius:3px}
+.post-content-inner ul{margin:8px 0 16px;padding-right:20px}
+.post-content-inner li{font-size:14px;color:var(--text2);margin-bottom:6px;line-height:2}
+.post-content-inner li .en{font-family:var(--font-en);color:var(--text3)}
+.post-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--accent);font-family:var(--font-en);font-weight:500;cursor:pointer;transition:.2s;background:none;border:none;padding:4px 0}
+.post-toggle:hover{color:var(--accent2)}
+/* Sub-post (child) styling */
+.post.child-post{margin-right:24px;border-color:var(--border);border-style:dashed;background:var(--bg2)}
+.post.child-post:hover{border-color:var(--text3);background:var(--bg3)}
+.post .parent-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-en);margin-bottom:6px;padding:3px 8px;background:var(--bg3);border:1px solid var(--border)}
+.post .parent-badge a{color:var(--accent);text-decoration:none}
+.post .parent-badge a:hover{text-decoration:underline}
+.post .child-count{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-en);margin-right:8px}
+/* Course cards */
+.course-card{background:var(--card);border:2px solid var(--border);padding:24px 28px;margin-bottom:16px;cursor:pointer;transition:.2s}
+.course-card:hover{border-color:var(--accent);background:var(--bg2)}
+.course-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.course-name{font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-en)}
+.course-meta{font-size:12px;color:var(--text3);font-family:var(--font-en);display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.course-session-count{font-size:13px;color:var(--accent);font-family:var(--font-en)}
+.session-card{background:var(--bg2);border:1px dashed var(--border);padding:20px 24px;margin-bottom:10px;cursor:pointer;transition:.2s}
+.session-card:hover{border-color:var(--text3);background:var(--bg3)}
+.session-card .post-content.closed{max-height:0}
+.session-card .post-content.open{max-height:none}
+/* Empty state */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty p{font-size:15px;margin-bottom:4px}
+.empty .sub{font-size:13px;font-family:var(--font-en)}
+/* Footer */
+footer{text-align:center;padding:32px 24px;border-top:1px solid var(--border);color:var(--text3);font-size:12px;font-family:var(--font-en)}
+footer a{color:var(--accent);text-decoration:none}
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.post,.course-card,.session-card{animation:fadeUp .4s ease}
+/* Responsive */
+@media(max-width:640px){
+  .header-inner{padding:16px}
+  .hero h1{font-size:28px}
+  .container{padding:24px 16px 60px}
+  .post{padding:20px}
+  .post-title{font-size:16px}
+  .course-card{padding:20px}
+  .session-card{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="header-inner">
+  <a class="logo" href="/">
+    <img src="/icon.png?v=3" alt="Druggable Code" class="logo-img">
+    <div>
+      <div class="logo-text">The <span>Druggable</span> Code</div>
+      <div class="logo-sub">ایمونولوژی · مهندسی دارو · هوش مصنوعی</div>
+    </div>
+  </a>
+  <div class="header-links">
+    <button onclick="switchView('home')" id="nav-home">Home</button>
+    <button onclick="switchView('courses')" id="nav-courses">Courses</button>
+    <a href="https://github.com/dr-afshari" target="_blank" style="padding:8px 14px;font-size:13px;color:var(--text2);text-decoration:none;transition:.2s;font-family:var(--font-en);border:1px solid transparent">GitHub</a>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="تغییر تم">🌙</button>
+  </div>
+</div>
+</header>
+
+<div class="container" id="main-container">
+  <!-- Hero -->
+  <div class="hero">
+    <h1>The <span>Druggable</span> Code</h1>
+    <div class="sub">یادداشت‌های یک پزشک در مسیر درک عمیق ایمونولوژی، مهندسی دارو و هوش مصنوعی</div>
+    <div class="sub-en">A physician's notes on the path to deep understanding of immunology, drug engineering, and AI</div>
+  </div>
+
+  <!-- View Tabs -->
+  <div class="view-tabs">
+    <button class="view-tab active" onclick="switchView('home')" id="tab-home">Posts</button>
+    <button class="view-tab" onclick="switchView('courses')" id="tab-courses">Courses</button>
+  </div>
+
+  <!-- Content area -->
+  <div id="posts-container"></div>
+</div>
+
+<footer>
+  <p>&copy; 2025 <a href="/">The Druggable Code</a> &middot; Built with curiosity &middot; Dr. Mohamad Afshari</p>
+</footer>
+
+<script>
+let posts = [];
+let courses = [];
+let allTags = new Set();
+let currentView = 'home';
+let expandedCourseId = null;
+let expandedSessionId = null;
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  if (html.getAttribute('data-theme') === 'light') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '\u{1F319}';
+    localStorage.setItem('dc_theme', 'dark');
+  } else {
+    html.setAttribute('data-theme', 'light');
+    btn.textContent = '\u{2600}\u{FE0F}';
+    localStorage.setItem('dc_theme', 'light');
+  }
+}
+const savedTheme = localStorage.getItem('dc_theme');
+if (savedTheme === 'light') {
+  document.documentElement.setAttribute('data-theme', 'light');
+  document.getElementById('themeBtn').textContent = '\u{2600}\u{FE0F}';
+}
+
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.header-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + view).classList.add('active');
+  document.getElementById('nav-' + view).classList.add('active');
+  if (view === 'home') renderHomeView();
+  else renderCoursesView();
+}
+
+async function loadData() {
+  try {
+    const r1 = await fetch('/posts.json?' + Date.now());
+    posts = await r1.json();
+  } catch(e) {
+    posts = [];
+  }
+  try {
+    const r2 = await fetch('/courses.json?' + Date.now());
+    courses = await r2.json();
+  } catch(e) {
+    courses = [];
+  }
+  renderHomeView();
+}
+
+/* ============ HOME VIEW ============ */
+function renderHomeView() {
+  const container = document.getElementById('posts-container');
+  allTags = new Set();
+  posts.forEach(p => p.tags.forEach(t => allTags.add(t)));
+  posts.sort((a, b) => b.id - a.id);
+
+  // Stats
+  const parentCount = posts.filter(p => !p.parentId).length;
+  let html = '<div class="stats">';
+  html += '<div class="stat"><span class="stat-num">' + posts.length + '</span> posts</div>';
+  html += '<div class="stat"><span class="stat-num">' + parentCount + '</span> series</div>';
+  html += '<div class="stat"><span class="stat-num">' + allTags.size + '</span> tags</div>';
+  html += '<div class="stat">\u{270F}\u{FE0F} <span class="stat-num">Dr. Mohamad Afshari</span></div>';
+  html += '</div>';
+
+  // Filter
+  html += '<div class="posts-header"><h2>Posts</h2><div class="filter-group" id="filter-group">';
+  html += '<button class="filter-btn active" onclick="filterPosts(\'all\')">All</button>';
+  allTags.forEach(tag => {
+    html += '<button class="filter-btn" onclick="filterPosts(\'' + tag + '\')">' + tag + '</button>';
+  });
+  html += '</div></div>';
+
+  container.innerHTML = html + '<div id="posts-list"></div>';
+  renderPosts('all');
+}
+
+function filterPosts(tag) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    if ((tag === 'all' && b.textContent === 'All') || b.textContent === tag) {
+      b.classList.add('active');
+    }
+  });
+  renderPosts(tag);
+}
+
+function renderPosts(filter) {
+  const listEl = document.getElementById('posts-list');
+  if (!listEl) return;
+  let filtered = filter === 'all' ? posts : posts.filter(p => p.tags.includes(tag));
+
+  const children = {};
+  const parentPosts = {};
+  posts.forEach(p => {
+    parentPosts[p.id] = p;
+    if (p.parentId) {
+      if (!children[p.parentId]) children[p.parentId] = [];
+      children[p.parentId].push(p);
+    }
+  });
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty"><p>\u{0647}\u{06CC}\u{0686} \u{067E}\u{0633}\u{062A}\u{06CC} \u{0628}\u{0627} \u{0627}\u{06CC}\u{0646} \u{0628}\u{0631}\u{0686}\u{0633}\u{0628} \u{06CC}\u{0627}\u{0641}\u{062A} \u{0646}\u{0634}\u{062F}</p><div class="sub">No posts found with this tag</div></div>';
+    return;
+  }
+
+  const filteredParents = filtered.filter(p => !p.parentId);
+  const filteredChildIds = new Set(filtered.filter(p => p.parentId).map(p => p.id));
+
+  let displayParents = [...filteredParents];
+  let displayChildIds = new Set(filteredChildIds);
+
+  if (filter !== 'all') {
+    filtered.filter(p => p.parentId).forEach(child => {
+      if (!displayParents.find(pp => pp.id === child.parentId)) {
+        const parent = parentPosts[child.parentId];
+        if (parent) displayParents.push(parent);
+      }
+    });
+  }
+
+  displayParents.sort((a, b) => b.id - a.id);
+
+  listEl.innerHTML = displayParents.map(parent => {
+    const childPosts = (children[parent.id] || []).sort((a, b) => b.id - a.id);
+    const hasChildren = childPosts.length > 0;
+    const isChildMatched = filter !== 'all' && childPosts.some(c => filteredChildIds.has(c.id));
+
+    if (filter !== 'all' && !filteredParents.includes(parent) && !isChildMatched) return '';
+    if (filter !== 'all' && !filteredParents.includes(parent) && !isChildMatched) return '';
+
+    let parentHtml = buildPostHtml(parent);
+    if (hasChildren) {
+      const badge = '<span class="child-count">\u{1F4CE} ' + childPosts.length + '</span>';
+      parentHtml = parentHtml.replace(
+        '<div class="post-title">' + parent.title + '</div>',
+        '<div class="post-title">' + parent.title + '</div>' + badge
+      );
+    }
+
+    const childrenHtml = childPosts.map(child => {
+      if (filter !== 'all' && !child.tags.includes(filter) && child.id !== parent.id) {
+        if (!filteredParents.includes(parent) && !filteredChildIds.has(child.id)) return '';
+      }
+      const childContent = renderContent(child.content);
+      const childContentBlock = child.content.length > 0
+        ? '<div class="post-content closed"><div class="post-content-inner">' + childContent + '</div></div><button class="post-toggle" onclick="event.stopPropagation();togglePost(this.parentElement)"><span class="toggle-text">Read more</span> \u{2193}</button>'
+        : '';
+      return '<div class="post child-post" onclick="togglePost(this)">'
+        + '<div class="parent-badge">\u{1F4CE} Part of <a href="#" onclick="event.stopPropagation();filterPosts(\'all\')">#' + parent.id + '</a></div>'
+        + '<div class="post-header"><div class="post-tags">' + child.tags.map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div><span class="post-date">' + child.date + '</span></div>'
+        + '<div class="post-title">' + child.title + '</div>'
+        + (child.titleEn ? '<div class="post-title-en">' + child.titleEn + '</div>' : '')
+        + childContentBlock + '</div>';
+    }).filter(h => h !== '').join('');
+
+    return parentHtml + childrenHtml;
+  }).filter(h => h !== '').join('');
+}
+
+/* ============ COURSES VIEW ============ */
+function renderCoursesView() {
+  const container = document.getElementById('posts-container');
+  if (!courses.length) {
+    container.innerHTML = '<div class="stats"><div class="stat"><span class="stat-num">0</span> courses</div></div>'
+      + '<div class="empty"><p>\u{0647}\u{06CC}\u{0686} \u{062F}\u{0648}\u{0631}\u{0647}\u{200C}\u{0627}\u{06CC} \u{062B}\u{0628}\u{062A} \u{0646}\u{0634}\u{062F}\u{0647}</p><div class="sub">No courses added yet</div></div>';
+    return;
+  }
+
+  let html = '<div class="stats">';
+  html += '<div class="stat"><span class="stat-num">' + courses.length + '</span> courses</div>';
+  const totalSessions = courses.reduce((sum, c) => sum + c.sessions.length, 0);
+  html += '<div class="stat"><span class="stat-num">' + totalSessions + '</span> sessions</div>';
+  html += '</div>';
+
+  html += '<div class="posts-header"><h2>Course Notes</h2></div>';
+
+  courses.sort((a, b) => b.id - a.id).forEach(course => {
+    const isExpanded = expandedCourseId === course.id;
+    const sessionCount = course.sessions.length;
+
+    html += '<div class="course-card" onclick="toggleCourse(' + course.id + ')">';
+    html += '<div class="course-card-header">';
+    html += '<div>';
+    html += '<div class="course-name">' + course.name + '</div>';
+    html += '<div class="course-meta">';
+    html += '<span>' + course.instructor + '</span>';
+    html += '<span>' + course.language + '</span>';
+    html += '<span>' + course.totalSessions + ' sessions</span>';
+    if (course.nameFa) html += '<span>' + course.nameFa + '</span>';
+    html += '</div></div>';
+    html += '<div class="course-session-count">' + sessionCount + ' session' + (sessionCount > 1 ? 's' : '') + ' \u{2193}</div>';
+    html += '</div>';
+
+    if (isExpanded) {
+      html += '<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">';
+      course.sessions.sort((a, b) => a.sessionNum - b.sessionNum).forEach(session => {
+        const sessExpanded = expandedSessionId === session.id;
+        const contentHtml = renderContent(session.content);
+
+        html += '<div class="session-card" onclick="event.stopPropagation();toggleSession(' + session.id + ')">';
+        html += '<div class="post-header">';
+        html += '<div class="post-tags">' + (course.tags || []).map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div>';
+        html += '<span class="post-date">' + session.date + ' \u{2022} Class ' + session.sessionNum + '</span>';
+        html += '</div>';
+        html += '<div class="post-title" style="font-size:15px">' + session.title + '</div>';
+        if (session.titleEn) html += '<div class="post-title-en">' + session.titleEn + '</div>';
+        if (session.videoUrl) {
+          html += '<a href="' + session.videoUrl + '" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;font-family:var(--font-en);margin-bottom:8px" onclick="event.stopPropagation()">'
+            + '\u{25B6} Watch on YouTube</a>';
+        }
+        html += '<div class="post-content ' + (sessExpanded ? 'open' : 'closed') + '">';
+        html += '<div class="post-content-inner">' + contentHtml + '</div></div>';
+        html += '<button class="post-toggle" onclick="event.stopPropagation();toggleSession(' + session.id + ')">';
+        html += '<span class="toggle-text">' + (sessExpanded ? 'Close' : 'Read more') + '</span> ' + (sessExpanded ? '\u{2191}' : '\u{2193}');
+        html += '</button></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleCourse(id) {
+  if (window.getSelection().toString().length > 0) return;
+  expandedCourseId = expandedCourseId === id ? null : id;
+  expandedSessionId = null;
+  renderCoursesView();
+}
+
+function toggleSession(id) {
+  if (window.getSelection().toString().length > 0) return;
+  expandedSessionId = expandedSessionId === id ? null : id;
+  renderCoursesView();
+}
+
+/* ============ SHARED ============ */
+function buildPostHtml(post) {
+  const contentHtml = renderContent(post.content);
+  const hasContent = post.content && post.content.length > 0;
+  return '<div class="post" onclick="togglePost(this)">'
+    + '<div class="post-header"><div class="post-tags">' + post.tags.map(t => '<span class="post-tag">' + t + '</span>').join('') + '</div><span class="post-date">' + post.date + '</span></div>'
+    + '<div class="post-title">' + post.title + '</div>'
+    + (post.author ? '<div class="post-author"><span class="author-badge">👤 ' + post.author + '</span></div>' : '')
+    + (post.titleEn ? '<div class="post-title-en">' + post.titleEn + '</div>' : '')
+    + (hasContent
+      ? '<div class="post-content closed"><div class="post-content-inner">' + contentHtml + '</div></div><button class="post-toggle" onclick="event.stopPropagation();togglePost(this.parentElement)"><span class="toggle-text">Read more</span> \u{2193}</button>'
+      : '<div style="font-size:12px;color:var(--text3);margin-top:8px;font-family:var(--font-en)">\u{23F3} Coming soon...</div>')
+    + '</div>';
+}
+
+function renderContent(content) {
+  if (!content || !Array.isArray(content)) return '';
+  return content.map(block => {
+    switch(block.type) {
+      case 'p':
+        if (block.fa && block.en) {
+          return '<p>' + block.fa + '</p><p><span class="en">' + block.en + '</span></p>';
+        }
+        return '<p>' + (block.fa || block.en || '') + '</p>';
+      case 'h3':
+        return '<h3>' + (block.fa || block.en || '') + '</h3>';
+      case 'img':
+        return '<div style="margin:20px 0"><img src="' + block.src + '" alt="' + (block.alt||'') + '" style="max-width:100%;border:2px solid var(--border)">' + (block.caption ? '<p style="font-size:12px;color:var(--text3);margin-top:6px;font-family:var(--font-en)">' + block.caption + '</p>' : '') + '</div>';
+      case 'ul': {
+        let h = '<ul>';
+        if (Array.isArray(block.fa)) {
+          block.fa.forEach(li => { h += '<li>' + li + '</li>'; });
+        } else if (typeof block.fa === 'string') {
+          block.fa.split('\n').filter(l => l.trim()).forEach(li => { h += '<li>' + li + '</li>'; });
+        }
+        if (block.en) {
+          if (Array.isArray(block.en)) {
+            block.en.forEach(li => { h += '<li><span class="en">' + li + '</span></li>'; });
+          } else if (typeof block.en === 'string') {
+            block.en.split('\n').filter(l => l.trim()).forEach(li => { h += '<li><span class="en">' + li + '</span></li>'; });
+          }
+        }
+        h += '</ul>';
+        return h;
+      }
+      case 'table': {
+        let t = '<div style="overflow-x:auto;margin:16px 0"><table dir="rtl" style="width:100%;border-collapse:collapse;font-size:13px">';
+        if (block.fa && block.fa.headers) {
+          t += '<thead><tr>';
+          block.fa.headers.forEach(th => { t += '<th style="background:var(--accent);color:#fff;padding:10px 12px;border:1px solid var(--border);text-align:center;font-weight:600">' + th + '</th>'; });
+          t += '</tr></thead>';
+        }
+        if (block.fa && block.fa.rows) {
+          t += '<tbody>';
+          block.fa.rows.forEach((row, ri) => {
+            t += '<tr' + (ri % 2 === 1 ? ' style="background:var(--bg2)"' : '') + '>';
+            row.forEach(td => { t += '<td dir="auto" style="padding:10px 12px;border:1px solid var(--border);color:var(--text2);text-align:right">' + td + '</td>'; });
+            t += '</tr>';
+          });
+          t += '</tbody>';
+        }
+        t += '</table></div>';
+        return t;
+      }
+      default:
+        return '';
+    }
+  }).join('');
+}
+
+function togglePost(el) {
+  if (window.getSelection().toString().length > 0) return;
+  const content = el.querySelector('.post-content');
+  const toggle = el.querySelector('.post-toggle');
+  if (!content || !toggle) return;
+  const isOpen = content.classList.contains('open');
+  if (isOpen) {
+    content.classList.remove('open');
+    content.classList.add('closed');
+    toggle.innerHTML = '<span class="toggle-text">Read more</span> \u{2193}';
+  } else {
+    content.classList.remove('closed');
+    content.classList.add('open');
+    toggle.innerHTML = '<span class="toggle-text">Close</span> \u{2191}';
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
