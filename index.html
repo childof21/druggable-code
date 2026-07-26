@@ -103,8 +103,7 @@ header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bott
 .hero .sub{color:var(--text2);font-size:15px;font-family:var(--font-fa);line-height:2;text-align:left;max-width:600px}
 .hero .sub-en{color:var(--text3);font-size:13px;font-family:var(--font-en);margin-top:6px;text-align:left;direction:ltr;font-weight:400}
 .hero-authors{display:flex;flex-direction:column;gap:2px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
-.author-line{font-size:13px;font-family:var(--font-en);color:var(--text2);font-weight:400;text-align:left;direction:ltr}
-.author-line:first-child{color:var(--accent);font-weight:500}
+.author-line{font-size:13px;font-family:var(--font-en);color:var(--accent);font-weight:500;text-align:left;direction:ltr}
 /* Stats */
 .stats{display:flex;gap:28px;margin-bottom:44px;flex-wrap:wrap}
 .stat{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:13px;font-family:var(--font-en)}
@@ -329,8 +328,7 @@ function renderHomeView() {
   html += '<div class="stat"><span class="stat-num">' + posts.length + '</span> posts</div>';
   html += '<div class="stat"><span class="stat-num">' + parentCount + '</span> series</div>';
   html += '<div class="stat"><span class="stat-num">' + allTags.size + '</span> tags</div>';
-  html += '<div class="stat">\u{270F}\u{FE0F} <span class="stat-num">Dr. Mohamad Afshari</span></div>';
-  html += '</div>';
+    html += '</div>';
 
   // Filter
   html += '<div class="posts-header"><h2>Posts</h2><div class="filter-group" id="filter-group">';
