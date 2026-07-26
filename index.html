@@ -102,6 +102,9 @@ header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bott
 .hero h1 span{background:linear-gradient(135deg,var(--accent),#a0e8f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero .sub{color:var(--text2);font-size:15px;font-family:var(--font-fa);line-height:2;text-align:left;max-width:600px}
 .hero .sub-en{color:var(--text3);font-size:13px;font-family:var(--font-en);margin-top:6px;text-align:left;direction:ltr;font-weight:400}
+.hero-authors{display:flex;flex-direction:column;gap:2px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.author-line{font-size:13px;font-family:var(--font-en);color:var(--text2);font-weight:400;text-align:left;direction:ltr}
+.author-line:first-child{color:var(--accent);font-weight:500}
 /* Stats */
 .stats{display:flex;gap:28px;margin-bottom:44px;flex-wrap:wrap}
 .stat{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:13px;font-family:var(--font-en)}
@@ -239,6 +242,10 @@ footer a{color:var(--accent);text-decoration:none}
     <h1>The <span>Druggable</span> Code</h1>
     <div class="sub">یادداشت‌های یک پزشک در مسیر درک عمیق ایمونولوژی، مهندسی دارو و هوش مصنوعی</div>
     <div class="sub-en">A physician's notes on the path to deep understanding of immunology, drug engineering, and AI</div>
+    <div class="hero-authors">
+      <span class="author-line">Dr. Mohamad Afshari</span>
+      <span class="author-line">Dr. Sobhan Kazemi</span>
+    </div>
   </div>
 
   <!-- View Tabs -->
