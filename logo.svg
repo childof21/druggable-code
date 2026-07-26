@@ -1,0 +1,18 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="tl-mask">
+      <rect width="1000" height="1000" fill="white"/>
+      <rect x="360" y="340" width="20" height="130" fill="black" transform="rotate(135 370 400)"/>
+      <rect x="360" y="460" width="20" height="130" fill="black" transform="rotate(225 370 500)"/>
+    </mask>
+    <mask id="br-mask">
+      <rect width="1000" height="1000" fill="white"/>
+      <rect x="620" y="380" width="20" height="130" fill="black" transform="rotate(-45 630 440)"/>
+      <rect x="620" y="550" width="20" height="130" fill="black" transform="rotate(45 630 610)"/>
+    </mask>
+  </defs>
+  <path d="M 500,500 L 500,120 A 380,380 0 0,0 120,500 Z" fill="#CCCCCC" mask="url(#tl-mask)"/>
+  <path d="M 500,500 L 500,880 A 380,380 0 0,0 880,500 Z" fill="#6c5ce7" mask="url(#br-mask)"/>
+  <rect x="485" y="80" width="30" height="640" fill="#6c5ce7" transform="rotate(45 500 500)"/>
+  <rect x="485" y="80" width="30" height="640" fill="#CCCCCC" transform="rotate(225 500 500)"/>
+</svg>
