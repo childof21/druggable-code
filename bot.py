@@ -13,6 +13,7 @@ import time
 import asyncio
 import logging
 import subprocess
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -68,155 +69,167 @@ def get_persian_date():
         return f"{persian_year:04d}/{now.month:02d}/{now.day:02d}"
 
 
-async def format_with_ai(raw_text, user_info=""):
-    """Use AI to format the content as a blog post"""
+async def format_with_ai(raw_text, user_info="", pdf_link=""):
+    """Use AI to format the content as a blog post. Produces a comprehensive Persian summary."""
     import httpx, json, re
     
     # Build the prompt - AI returns JSON with: title, tags, and enhanced text
-    system_prompt = """You are a blog formatting assistant. Return JSON with:
+    system_prompt = """You are a blog formatting assistant for a Persian medical/biotech blog. Return JSON with:
 {
   "title": "Persian title (5-12 words, with emoji)",
   "titleEn": "English title (optional)",
   "tags": ["3-5 Persian tags"],
-  "enhanced_text": "the SAME text with <mark>highlights</mark>, emojis, and tables added"
+  "enhanced_text": "a comprehensive Persian summary with highlights, emojis, and tables"
 }
 
 RULES:
-1. Use <span class="hl">IMPORTANT TERMS</span> (purple highlight) for: drug names, protein names, model names, key numbers, breakthroughs. NOT <mark>.
-2. Use <strong>BOLD</strong> for emphasis on key points.
-3. Add emojis at section starts: 🔬 💊 🤖 🧬 🧪 📊 🚀 🧫 💉 ⚕️
-4. Convert markdown tables (| separated) to proper table format
-5. Keep ## headings, - lists, * lists as-is
-6. STRICT: Use ONLY HTML tags. NEVER use markdown (** or * for bold/italic). NEVER use <mark>. NEVER use backticks (`) for code.
-7. STRICT: DO NOT change, remove, or rephrase ANY word. Preserve EVERY word exactly.
-8. Split text into SHORT paragraphs (2-4 sentences each). Use blank lines between paragraph breaks.
+0. **SUMMARY, NOT FULL TEXT: Write a comprehensive summary of the content in Persian (فارسی).** Do NOT reproduce the entire document verbatim. Instead: capture EVERY key section/heading, every important number, every table (condensed to its essential rows), and every main point. A reader should understand the complete picture without reading the original — nothing important missed.
+0b. **LANGUAGE: ALL enhanced_text MUST be in Persian (فارسی).** If the input is English, translate to Persian. Keep technical terms, drug names, company names, and numbers in original Latin form where appropriate.
+1. Structure the summary with ## headings matching the document's major sections. Under each heading use - bullets with the key facts.
+2. Include ALL important numbers, statistics, percentages, and dates mentioned in the document.
+3. Include tables (| separated) for ranking/comparison data — keep the most important rows, no more than 10-12 rows per table.
+4. Use <span class="hl">IMPORTANT TERMS</span> (purple highlight) for: drug names, protein names, model names, key numbers, breakthroughs. NOT <mark>.
+5. Use <strong>BOLD</strong> for emphasis on key points.
+6. Add emojis at section starts: 🔬 💊 🤖 🧬 🧪 📊 🚀 🧫 💉 ⚕️
+7. Use ONLY HTML tags. NEVER use markdown (** or * for bold/italic). NEVER use <mark>. NEVER use backticks (`) for code.
+8. Keep it comprehensive but readable: aim for roughly 1/4 to 1/3 of the original length. Short paragraphs, blank lines between them.
 9. Tags from: ['هوش مصنوعی', 'مدل‌های زبانی', 'مهندسی پروتئین', 'ESM3', 'PLM', 'طراحی دارو', 'سرمایه‌گذاری', 'تولید دارو', 'آنتی‌بادی مونوکلونال', 'بیوتکنولوژی', 'سلول مجازی', 'اوپن‌سورس', 'ایمونولوژی', 'بیوانفورماتیک']
 
 Output ONLY valid JSON."""
 
-    user_prompt = f"""Format this content. Return JSON with title, tags, and enhanced_text:
+    user_prompt = f"""Format this content into a comprehensive Persian summary. Return JSON with title, tags, and enhanced_text:
 
-{raw_text[:8000]}"""
+{raw_text[:60000]}"""
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        response = await client.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_KEY}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": "deepseek/deepseek-chat",
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": 0.7,
-                "max_tokens": 4000,
-            }
-        )
+    meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
+    enhanced = raw_text
+    
+    try:
+        async with httpx.AsyncClient(timeout=150.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "deepseek/deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 4000,
+                }
+            )
+            
+            result = response.json()
+            content = result["choices"][0]["message"]["content"]
+            
+            # Clean up the response (remove markdown code fences if any)
+            content = content.strip()
+            if content.startswith("```"):
+                content = content.split("\n", 1)[1]
+            if content.endswith("```"):
+                content = content.rsplit("```", 1)[0]
+            content = content.strip()
+            
+            try:
+                meta = json.loads(content)
+                enhanced = meta.get("enhanced_text", content)
+            except json.JSONDecodeError as e:
+                log.error(f"Failed to parse AI response: {e}")
+                enhanced = content or raw_text
+                meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
+            
+            log.info(f"✅ AI summary generated ({len(enhanced)} chars)")
+    except Exception as e:
+        log.error(f"❌ AI formatting failed: {e}", exc_info=True)
+        # Fallback: use first 3000 chars of raw text so post still publishes
+        enhanced = raw_text[:3000]
+    
+    # Append PDF link at the end for direct study
+    if pdf_link:
+        enhanced += f"\n\n---\n\n📄 <strong>مطالعه کامل (PDF اصلی):</strong> <a href=\"{pdf_link}\">دانلود و مطالعه مستقیم</a>"
+    
+    enhanced = enhanced.strip()
+    
+    # Parse the enhanced text into content blocks
+    content_blocks = []
+    current_para = []
+    in_list = False
+    list_items = []
+    in_table = False
+    table_headers = []
+    table_rows = []
+    
+    for line in enhanced.strip().split('\n'):
+        stripped = line.strip()
+        if not stripped:
+            _flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            continue
         
-        result = response.json()
-        content = result["choices"][0]["message"]["content"]
-        
-        # Clean up the response (remove markdown code fences if any)
-        content = content.strip()
-        if content.startswith("```"):
-            content = content.split("\n", 1)[1]
-        if content.endswith("```"):
-            content = content.rsplit("```", 1)[0]
-        content = content.strip()
-        
-        # Parse the JSON
-        try:
-            meta = json.loads(content)
-        except json.JSONDecodeError as e:
-            log.error(f"Failed to parse AI response: {e}")
-            # Fallback: use raw text, generate title ourselves
-            log.info("Falling back to raw text parsing")
-            meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
-            enhanced = raw_text
+        # Table row
+        if stripped.startswith('|') and stripped.endswith('|') and stripped.count('|') > 2:
+            _flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            cells = [c.strip() for c in stripped.split('|')[1:-1]]
+            if not in_table:
+                table_headers = cells
+                in_table = True
+            elif all(c.strip() in ['---', ':', ':-', '-:', '::'] for c in stripped.split('|')[1:-1]):
+                continue
+            else:
+                table_rows.append(cells)
+            continue
         else:
-            enhanced = meta.get("enhanced_text", raw_text)
+            if in_table:
+                _flush_table(content_blocks, table_headers, table_rows)
+                table_headers, table_rows, in_table = [], [], False
         
-        # Parse the enhanced text into content blocks
-        content_blocks = []
-        current_para = []
-        in_list = False
-        list_items = []
-        in_table = False
-        table_headers = []
-        table_rows = []
+        # Heading
+        if stripped.startswith('##') or stripped.startswith('###'):
+            _flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            content_blocks.append({"type": "h3", "fa": re.sub(r'^#+\s*', '', stripped)})
         
-        for line in enhanced.strip().split('\n'):
-            stripped = line.strip()
-            if not stripped:
-                _flush_para(content_blocks, current_para, list_items, in_list)
-                current_para, list_items, in_list = [], [], False
-                continue
-            
-            # Table row
-            if stripped.startswith('|') and stripped.endswith('|') and stripped.count('|') > 2:
-                _flush_para(content_blocks, current_para, list_items, in_list)
-                current_para, list_items, in_list = [], [], False
-                cells = [c.strip() for c in stripped.split('|')[1:-1]]
-                if not in_table:
-                    # Check if next line is a separator
-                    table_headers = cells
-                    in_table = True
-                elif all(c.strip() in ['---', ':', ':-', '-:', '::'] for c in stripped.split('|')[1:-1]):
-                    # Separator row, skip
-                    continue
-                else:
-                    table_rows.append(cells)
-                continue
-            else:
-                if in_table:
-                    _flush_table(content_blocks, table_headers, table_rows)
-                    table_headers, table_rows, in_table = [], [], False
-            
-            # Heading
-            if stripped.startswith('##') or stripped.startswith('###'):
-                _flush_para(content_blocks, current_para, list_items, in_list)
-                current_para, list_items, in_list = [], [], False
-                content_blocks.append({"type": "h3", "fa": re.sub(r'^#+\s*', '', stripped)})
-            
-            # List item
-            elif stripped.startswith('- ') or stripped.startswith('* ') or stripped.startswith('• '):
-                _flush_para_no_list(content_blocks, current_para)
-                current_para = []
-                in_list = True
-                list_items.append(re.sub(r'^[-*•]\s*', '', stripped))
-            
-            # Regular paragraph
-            else:
-                if in_list:
-                    _flush_list(content_blocks, list_items)
-                    list_items, in_list = [], False
-                current_para.append(stripped)
+        # List item
+        elif stripped.startswith('- ') or stripped.startswith('* ') or stripped.startswith('• '):
+            _flush_para_no_list(content_blocks, current_para)
+            current_para = []
+            in_list = True
+            list_items.append(re.sub(r'^[-*•]\s*', '', stripped))
         
-        # Flush remaining
-        if in_table:
-            _flush_table(content_blocks, table_headers, table_rows)
-        if in_list and list_items:
-            _flush_list(content_blocks, list_items)
-        if current_para:
-            content_blocks.append({"type": "p", "fa": "\n".join(current_para)})
-        
-        # If no blocks, fallback to simple text
-        if not content_blocks:
-            content_blocks.append({"type": "p", "fa": raw_text.strip()})
-        
-        # Build the final post data
-        post_data = {
-            "title": meta.get("title", "📄 پست جدید"),
-            "titleEn": meta.get("titleEn", ""),
-            "tags": meta.get("tags", ["عمومی"]),
-            "lang": meta.get("lang", "fa"),
-            "content": content_blocks
-        }
-        
-        return post_data
+        # Regular paragraph
+        else:
+            if in_list:
+                _flush_list(content_blocks, list_items)
+                list_items, in_list = [], False
+            current_para.append(stripped)
+    
+    # Flush remaining
+    if in_table:
+        _flush_table(content_blocks, table_headers, table_rows)
+    if in_list and list_items:
+        _flush_list(content_blocks, list_items)
+    if current_para:
+        content_blocks.append({"type": "p", "fa": "\n".join(current_para)})
+    
+    # If no blocks, fallback to simple text
+    if not content_blocks:
+        content_blocks.append({"type": "p", "fa": enhanced})
+    
+    # Build the final post data
+    post_data = {
+        "title": meta.get("title", "📄 پست جدید"),
+        "titleEn": meta.get("titleEn", ""),
+        "tags": meta.get("tags", ["عمومی"]),
+        "lang": meta.get("lang", "fa"),
+        "content": content_blocks
+    }
+    
+    return post_data
 
 
 def _flush_para(blocks, para, items, in_list):
@@ -258,12 +271,12 @@ def deploy_to_vercel():
         return False
 
 
-async def publish_post(raw_text, user_info="", author=""):
+async def publish_post(raw_text, user_info="", author="", pdf_link=""):
     """Main function: format content, add to posts.json, deploy"""
     log.info(f"Starting AI formatting... (author: {author})")
     
     # Format with AI
-    post_data = await format_with_ai(raw_text, user_info)
+    post_data = await format_with_ai(raw_text, user_info, pdf_link)
     
     # Load current posts
     posts = load_posts()
@@ -382,6 +395,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # Extract text based on file type
         text = ""
+        pdf_link = ""
         
         if file_name.endswith('.pdf'):
             # Extract text from PDF
@@ -392,10 +406,38 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pdf_doc.close()
             log.info(f"📄 Extracted {len(text)} chars from PDF: {doc.file_name}")
             
+            # Save PDF to site's pdfs/ folder so we can link it in the post
+            try:
+                pdf_dir = BOT_DIR / "pdfs"
+                pdf_dir.mkdir(exist_ok=True)
+                # Safe filename: lowercase, keep letters/digits/dashes
+                safe_name = re.sub(r'[^a-zA-Z0-9._-]', '-', doc.file_name.lower())
+                pdf_path = pdf_dir / safe_name
+                with open(pdf_path, 'wb') as f:
+                    f.write(bytes(file_bytes))
+                pdf_link = f"https://druggable-code.vercel.app/pdfs/{safe_name}"
+                log.info(f"📎 PDF saved for direct study: {pdf_path} -> {pdf_link}")
+            except Exception as e:
+                log.error(f"⚠️ Could not save PDF for linking: {e}")
+            
         elif file_name.endswith('.md') or file_name.endswith('.txt') or file_name.endswith('.markdown'):
             # Plain text / markdown
             text = file_bytes.decode('utf-8', errors='replace')
             log.info(f"📄 Read {len(text)} chars from {doc.file_name}")
+            
+        elif file_name.endswith('.html') or file_name.endswith('.htm'):
+            # Extract clean text from HTML (strip tags, remove scripts/styles)
+            from bs4 import BeautifulSoup
+            raw = file_bytes.decode('utf-8', errors='replace')
+            soup = BeautifulSoup(raw, 'html.parser')
+            # Remove non-content elements
+            for tag in soup(['script', 'style', 'nav', 'footer', 'header', 'aside', 'form', 'button', 'noscript']):
+                tag.decompose()
+            text = soup.get_text(separator='\n')
+            # Clean up blank lines
+            lines = [l.strip() for l in text.split('\n') if l.strip()]
+            text = '\n'.join(lines)
+            log.info(f"📄 Extracted {len(text)} chars from HTML: {doc.file_name}")
             
         else:
             # Try reading as text
@@ -403,7 +445,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 text = file_bytes.decode('utf-8', errors='replace')
                 log.info(f"📄 Read {len(text)} chars from {doc.file_name} (as text)")
             except:
-                await msg.edit_text("❌ فرمت فایل پشتیبانی نمی‌شه. لطفاً PDF, MD یا TXT بفرست.")
+                await msg.edit_text("❌ فرمت فایل پشتیبانی نمی‌شه. لطفاً PDF, MD, TXT یا HTML بفرست.")
                 return
         
         if not text.strip():
@@ -419,14 +461,14 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "در حال پردازش با هوش مصنوعی... 🧠"
         )
         
-        await process_content(update, context, text, user)
+        await process_content(update, context, text, user, pdf_link)
         
     except Exception as e:
         log.error(f"❌ Error processing file: {e}", exc_info=True)
         await msg.edit_text(f"❌ خطا در پردازش فایل: {str(e)[:200]}")
 
 
-async def process_content(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, user):
+async def process_content(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, user, pdf_link=""):
     """Process text content (shared by text messages and file uploads)"""
     # Determine author based on who sent the message
     username = (user.username or "").lower()
@@ -460,7 +502,7 @@ async def process_content(update: Update, context: ContextTypes.DEFAULT_TYPE, te
     
     try:
         user_info = f"User: {user.full_name} (@{user.username})" if user.username else f"User: {user.full_name}"
-        post_data, success = await publish_post(text, user_info, author)
+        post_data, success = await publish_post(text, user_info, author, pdf_link)
         
         if success:
             await msg.edit_text(
