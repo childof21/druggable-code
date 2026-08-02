@@ -70,7 +70,7 @@ def get_persian_date():
 
 
 async def format_with_ai(raw_text, user_info="", pdf_link=""):
-    """Use AI to format the content as a blog post. Produces a comprehensive Persian summary."""
+    """Use AI to rewrite the content in clear, educational Persian. NO summarization."""
     import httpx, json, re
     
     # Build the prompt - AI returns JSON with: title, tags, and enhanced text
@@ -79,74 +79,96 @@ async def format_with_ai(raw_text, user_info="", pdf_link=""):
   "title": "Persian title (5-12 words, with emoji)",
   "titleEn": "English title (optional)",
   "tags": ["3-5 Persian tags"],
-  "enhanced_text": "a comprehensive Persian summary with highlights, emojis, and tables"
+  "enhanced_text": "the COMPLETE text rewritten in clear, educational Persian with highlights, emojis, and tables"
 }
 
 RULES:
-0. **SUMMARY, NOT FULL TEXT: Write a comprehensive summary of the content in Persian (فارسی).** Do NOT reproduce the entire document verbatim. Instead: capture EVERY key section/heading, every important number, every table (condensed to its essential rows), and every main point. A reader should understand the complete picture without reading the original — nothing important missed.
-0b. **LANGUAGE: ALL enhanced_text MUST be in Persian (فارسی).** If the input is English, translate to Persian. Keep technical terms, drug names, company names, and numbers in original Latin form where appropriate.
-1. Structure the summary with ## headings matching the document's major sections. Under each heading use - bullets with the key facts.
-2. Include ALL important numbers, statistics, percentages, and dates mentioned in the document.
-3. Include tables (| separated) for ranking/comparison data — keep the most important rows, no more than 10-12 rows per table.
-4. Use <span class="hl">IMPORTANT TERMS</span> (purple highlight) for: drug names, protein names, model names, key numbers, breakthroughs. NOT <mark>.
-5. Use <strong>BOLD</strong> for emphasis on key points.
-6. Add emojis at section starts: 🔬 💊 🤖 🧬 🧪 📊 🚀 🧫 💉 ⚕️
+0. **NO SUMMARIZATION - ABSOLUTELY FORBIDDEN: Rewrite the FULL text.** You must NOT summarize, shorten, compress, merge, or omit ANY part of the input. Every sentence, every paragraph, every number, every table cell, every list item, every heading MUST appear in the output. The output must contain 100% of the information — nothing less. You are REWRITING for clarity, NOT condensing.
+0b. **LANGUAGE: ALL enhanced_text MUST be in Persian (فارسی).** If the input is English, translate EVERY sentence to Persian. Keep technical terms, drug names, company names, and numbers in Latin form where appropriate, but the surrounding text is Persian.
+1. **EDUCATIONAL REWRITE:** Make the text clear, fluent, and easy to understand for medical students and professionals. Explain complex concepts with simpler phrasing. Use a teaching tone. BUT: rewriting for clarity NEVER means removing content — keep every fact, number, and detail.
+2. Tables: convert markdown tables (| separated) to proper table format — EVERY row and EVERY column preserved exactly.
+3. Use <span class="hl">IMPORTANT TERMS</span> (purple highlight) for: drug names, protein names, model names, key numbers, breakthroughs. NOT <mark>.
+4. Use <strong>BOLD</strong> for emphasis on key points.
+5. Add emojis at section starts: 🔬 💊 🤖 🧬 🧪 📊 🚀 🧫 💉 ⚕️
+6. Keep ## headings, ### headings, - lists, * lists — ALL of them, exactly as many as in the input.
 7. Use ONLY HTML tags. NEVER use markdown (** or * for bold/italic). NEVER use <mark>. NEVER use backticks (`) for code.
-8. Keep it comprehensive but readable: aim for roughly 1/4 to 1/3 of the original length. Short paragraphs, blank lines between them.
+8. Split text into readable paragraphs (2-4 sentences each). Use blank lines between paragraph breaks. Preserve ALL paragraphs from the original.
 9. Tags from: ['هوش مصنوعی', 'مدل‌های زبانی', 'مهندسی پروتئین', 'ESM3', 'PLM', 'طراحی دارو', 'سرمایه‌گذاری', 'تولید دارو', 'آنتی‌بادی مونوکلونال', 'بیوتکنولوژی', 'سلول مجازی', 'اوپن‌سورس', 'ایمونولوژی', 'بیوانفورماتیک']
 
 Output ONLY valid JSON."""
 
-    user_prompt = f"""Format this content into a comprehensive Persian summary. Return JSON with title, tags, and enhanced_text:
-
-{raw_text[:60000]}"""
-
-    meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
-    enhanced = raw_text
+    # Chunk long texts - LIMITED number of chunks (15000 chars each) to keep quality high
+    CHUNK_SIZE = 15000
+    chunks = [raw_text[i:i+CHUNK_SIZE] for i in range(0, len(raw_text), CHUNK_SIZE)]
+    log.info(f"📚 Text split into {len(chunks)} chunk(s) (15000 chars each)")
     
-    try:
-        async with httpx.AsyncClient(timeout=150.0) as client:
-            response = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {OPENROUTER_KEY}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": "deepseek/deepseek-chat",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 4000,
-                }
-            )
+    all_enhanced = []
+    meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
+    
+    async with httpx.AsyncClient(timeout=180.0) as client:
+        for idx, chunk in enumerate(chunks):
+            is_first = (idx == 0)
             
-            result = response.json()
-            content = result["choices"][0]["message"]["content"]
-            
-            # Clean up the response (remove markdown code fences if any)
-            content = content.strip()
-            if content.startswith("```"):
-                content = content.split("\n", 1)[1]
-            if content.endswith("```"):
-                content = content.rsplit("```", 1)[0]
-            content = content.strip()
+            if is_first:
+                user_prompt = f"Rewrite this content in clear educational Persian, keeping EVERYTHING. Return JSON with title, tags, and enhanced_text:\n\n{chunk}"
+            else:
+                user_prompt = f"Continue rewriting the following continuation chunk in clear educational Persian. Return ONLY the enhanced_text as plain text (NOT wrapped in JSON). Keep EVERYTHING - no summarization:\n\n{chunk}"
             
             try:
-                meta = json.loads(content)
-                enhanced = meta.get("enhanced_text", content)
-            except json.JSONDecodeError as e:
-                log.error(f"Failed to parse AI response: {e}")
-                enhanced = content or raw_text
-                meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
-            
-            log.info(f"✅ AI summary generated ({len(enhanced)} chars)")
-    except Exception as e:
-        log.error(f"❌ AI formatting failed: {e}", exc_info=True)
-        # Fallback: use first 3000 chars of raw text so post still publishes
-        enhanced = raw_text[:3000]
+                response = await client.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {OPENROUTER_KEY}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": "deepseek/deepseek-chat",
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        "temperature": 0.7,
+                        "max_tokens": 8000,
+                    }
+                )
+                
+                result = response.json()
+                content = result["choices"][0]["message"]["content"]
+                
+                # Clean up the response (remove markdown code fences if any)
+                content = content.strip()
+                if content.startswith("```"):
+                    content = content.split("\n", 1)[1]
+                if content.endswith("```"):
+                    content = content.rsplit("```", 1)[0]
+                content = content.strip()
+                
+                if is_first:
+                    try:
+                        meta = json.loads(content)
+                        enhanced = meta.get("enhanced_text", chunk)
+                    except json.JSONDecodeError as e:
+                        log.error(f"Failed to parse AI response: {e}")
+                        enhanced = content or chunk
+                        meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
+                else:
+                    # Continuation chunk - try JSON, else plain text
+                    try:
+                        parsed = json.loads(content)
+                        enhanced = parsed.get("enhanced_text", content)
+                    except json.JSONDecodeError:
+                        enhanced = content
+                
+                if enhanced:
+                    all_enhanced.append(enhanced)
+                log.info(f"✅ Chunk {idx+1}/{len(chunks)} processed ({len(enhanced)} chars)")
+            except Exception as e:
+                log.error(f"❌ Chunk {idx+1} failed: {e}", exc_info=True)
+                # Keep original chunk text as fallback so no content is lost
+                all_enhanced.append(chunk)
+    
+    # Join all chunks
+    enhanced = "\n\n".join(all_enhanced) if all_enhanced else raw_text
     
     # Append PDF link at the end for direct study
     if pdf_link:
