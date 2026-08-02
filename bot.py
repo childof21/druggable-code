@@ -293,36 +293,325 @@ def deploy_to_vercel():
         return False
 
 
-async def publish_post(raw_text, user_info="", author="", pdf_link=""):
-    """Main function: format content, add to posts.json, deploy"""
-    log.info(f"Starting AI formatting... (author: {author})")
+async def detect_sections(raw_text):
+    """Ask AI to identify the main sections of the document. Returns list of {title, marker}."""
+    import httpx, json
+    system_prompt = """You are a document structure analyzer. Given the text of a document, identify its MAIN sections.
+Return ONLY valid JSON:
+{"sections": [{"title": "Section title in English (original)", "marker": "exact 5-10 word phrase from the text that marks the START of this section"}, ...]}
+
+RULES:
+- Identify 2 to 12 major sections (the top-level structure of the document). Do NOT include the title page, author info, copyright, or table of contents as sections.
+- A section usually begins right after a heading. The "marker" must be a UNIQUE phrase (5-10 consecutive words) that appears verbatim at the beginning of that section's body text.
+- Use the LAST section marker to capture everything up to the end of the document.
+- If the document has no clear sections (short text, single topic), return {"sections": []}."""
+
+    user_prompt = f"Analyze this document and identify its main sections:\n\n{raw_text[:30000]}"
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "deepseek/deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.2,
+                    "max_tokens": 2000,
+                }
+            )
+            result = response.json()
+            content_out = result["choices"][0]["message"]["content"].strip()
+            if content_out.startswith("```"):
+                content_out = content_out.split("\n", 1)[1]
+            if content_out.endswith("```"):
+                content_out = content_out.rsplit("```", 1)[0]
+            sections = json.loads(content_out).get("sections", [])
+            log.info(f"🔍 Detected {len(sections)} sections: {[s['title'][:40] for s in sections]}")
+            return sections
+    except Exception as e:
+        log.error(f"❌ Section detection failed: {e}", exc_info=True)
+        return []
+
+
+def split_sections(raw_text, sections):
+    """Split raw_text into section chunks using the detected markers."""
+    if not sections or len(sections) < 2:
+        return []
     
-    # Format with AI
-    post_data = await format_with_ai(raw_text, user_info, pdf_link)
+    # Find each marker's position in the text (case-insensitive, normalized)
+    positions = []
+    for s in sections:
+        marker = s.get("marker", "").strip()
+        if not marker:
+            continue
+        # Try exact match first, then case-insensitive
+        idx = raw_text.find(marker)
+        if idx == -1:
+            idx = raw_text.lower().find(marker.lower())
+        if idx == -1:
+            # Try first 6 words
+            words = marker.split()[:6]
+            partial = " ".join(words)
+            idx = raw_text.find(partial)
+            if idx == -1:
+                idx = raw_text.lower().find(partial.lower())
+        positions.append((idx, s))
+    
+    # Sort by position, drop misses
+    positions = [(idx, s) for idx, s in positions if idx >= 0]
+    positions.sort(key=lambda x: x[0])
+    
+    if len(positions) < 2:
+        return []
+    
+    chunks = []
+    for i, (idx, s) in enumerate(positions):
+        start = idx
+        end = positions[i+1][0] if i+1 < len(positions) else len(raw_text)
+        chunk_text = raw_text[start:end].strip()
+        if chunk_text:
+            chunks.append({"title": s.get("title", f"Section {i+1}"), "text": chunk_text})
+    return chunks
+
+
+async def format_section_ai(section_text, section_title, part, total, user_info=""):
+    """Educational rewrite of ONE section - full text, NO summarization."""
+    import httpx, json, re
+    system_prompt = """You are a blog formatting assistant for a Persian medical/biotech blog. Return JSON with:
+{
+  "title": "Persian title for this section (4-12 words, with emoji, starting with the part number)",
+  "tags": ["3-5 Persian tags"],
+  "enhanced_text": "the COMPLETE section text rewritten in clear, educational Persian with highlights, emojis, and tables"
+}
+
+RULES:
+0. **NO SUMMARIZATION - ABSOLUTELY FORBIDDEN: Rewrite the FULL section text.** Every sentence, every number, every table cell, every list item MUST appear in the output. You are REWRITING for clarity, NOT condensing.
+0b. **LANGUAGE: ALL enhanced_text MUST be in Persian (فارسی).** Translate every sentence. Keep technical terms, drug names, company names, numbers in Latin form where appropriate.
+1. **EDUCATIONAL REWRITE:** Clear, fluent, teaching tone for medical students and professionals. Explain complex concepts simply. Never remove content.
+2. Tables: convert markdown tables (| separated) to proper table format - EVERY row and column preserved.
+3. Use <span class="hl">IMPORTANT TERMS</span> (purple highlight) for: drug names, protein names, model names, key numbers, breakthroughs. NOT <mark>.
+4. Use <strong>BOLD</strong> for key points. Add emojis at section starts: 🔬 💊 🤖 🧬 🧪 📊 🚀 🧫 💉 ⚕️
+5. Keep ## headings, ### headings, - lists, * lists - ALL of them, exactly as many as in the input.
+6. Use ONLY HTML tags. NEVER markdown (** or *). NEVER <mark>. NEVER backticks.
+7. Split into readable paragraphs (2-4 sentences). Blank lines between paragraph breaks. Preserve ALL paragraphs.
+8. Tags from: ['هوش مصنوعی', 'مدل‌های زبانی', 'مهندسی پروتئین', 'ESM3', 'PLM', 'طراحی دارو', 'سرمایه‌گذاری', 'تولید دارو', 'آنتی‌بادی مونوکلونال', 'بیوتکنولوژی', 'سلول مجازی', 'اوپن‌سورس', 'ایمونولوژی', 'بیوانفورماتیک']
+
+Output ONLY valid JSON."""
+
+    user_prompt = f"""Rewrite this section (Part {part} of {total}) in clear educational Persian. Section title: {section_title}
+Return JSON with title, tags, and enhanced_text:
+
+{section_text[:15000]}"""
+
+    meta = {"title": f"[{part}/{total}] {section_title}", "tags": ["عمومی"]}
+    enhanced = section_text
+    
+    try:
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "deepseek/deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 8000,
+                }
+            )
+            result = response.json()
+            content_out = result["choices"][0]["message"]["content"].strip()
+            if content_out.startswith("```"):
+                content_out = content_out.split("\n", 1)[1]
+            if content_out.endswith("```"):
+                content_out = content_out.rsplit("```", 1)[0]
+            try:
+                meta = json.loads(content_out)
+                enhanced = meta.get("enhanced_text", section_text)
+            except json.JSONDecodeError:
+                enhanced = content_out or section_text
+            log.info(f"✅ Section '{section_title[:40]}' rewritten ({len(enhanced)} chars)")
+    except Exception as e:
+        log.error(f"❌ Section '{section_title[:30]}' failed: {e}", exc_info=True)
+        enhanced = section_text[:4000]
+    
+    return meta, enhanced
+
+
+def blocks_from_text(enhanced):
+    """Convert enhanced markdown-ish text into content blocks (same logic as format_with_ai)."""
+    import re
+    content_blocks = []
+    current_para = []
+    in_list = False
+    list_items = []
+    in_table = False
+    table_headers = []
+    table_rows = []
+
+    def flush_para(blocks, para, items, in_list):
+        if in_list and items:
+            blocks.append({"type": "ul", "fa": items})
+        if para:
+            blocks.append({"type": "p", "fa": "\n".join(para)})
+
+    def flush_para_no_list(blocks, para):
+        if para:
+            blocks.append({"type": "p", "fa": "\n".join(para)})
+
+    def flush_list(blocks, items):
+        if items:
+            blocks.append({"type": "ul", "fa": items})
+
+    def flush_table(blocks, headers, rows):
+        if headers and rows:
+            blocks.append({"type": "table", "fa": {"headers": headers, "rows": rows}})
+
+    for line in enhanced.strip().split('\n'):
+        stripped = line.strip()
+        if not stripped:
+            flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            continue
+        if stripped.startswith('|') and stripped.endswith('|') and stripped.count('|') > 2:
+            flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            cells = [c.strip() for c in stripped.split('|')[1:-1]]
+            if not in_table:
+                table_headers = cells
+                in_table = True
+            elif all(c.strip() in ['---', ':', ':-', '-:', '::'] for c in stripped.split('|')[1:-1]):
+                continue
+            else:
+                table_rows.append(cells)
+            continue
+        else:
+            if in_table:
+                flush_table(content_blocks, table_headers, table_rows)
+                table_headers, table_rows, in_table = [], [], False
+        if stripped.startswith('##') or stripped.startswith('###'):
+            flush_para(content_blocks, current_para, list_items, in_list)
+            current_para, list_items, in_list = [], [], False
+            content_blocks.append({"type": "h3", "fa": re.sub(r'^#+\s*', '', stripped)})
+        elif stripped.startswith('- ') or stripped.startswith('* ') or stripped.startswith('• '):
+            flush_para_no_list(content_blocks, current_para)
+            current_para = []
+            in_list = True
+            list_items.append(re.sub(r'^[-*•]\s*', '', stripped))
+        else:
+            if in_list:
+                flush_list(content_blocks, list_items)
+                list_items, in_list = [], False
+            current_para.append(stripped)
+
+    if in_table:
+        flush_table(content_blocks, table_headers, table_rows)
+    if in_list and list_items:
+        flush_list(content_blocks, list_items)
+    if current_para:
+        content_blocks.append({"type": "p", "fa": "\n".join(current_para)})
+    if not content_blocks:
+        content_blocks.append({"type": "p", "fa": enhanced.strip()})
+    return content_blocks
+
+
+async def publish_post(raw_text, user_info="", author="", pdf_link=""):
+    """Main function: detect sections -> publish each section as a series post."""
+    log.info(f"Starting AI formatting... (author: {author})")
     
     # Load current posts
     posts = load_posts()
+    date_str = get_persian_date()
     
-    # Assign ID and date
-    post_data["id"] = get_next_id(posts)
-    if "date" not in post_data or not post_data.get("date"):
-        post_data["date"] = get_persian_date()
-    if "lang" not in post_data:
+    # Detect sections first
+    sections = await detect_sections(raw_text)
+    chunks = split_sections(raw_text, sections)
+    
+    # If no clear sections -> single post (old behavior)
+    if len(chunks) < 2:
+        log.info("📄 No multiple sections detected - publishing as single post")
+        post_data = await format_with_ai(raw_text, user_info, pdf_link)
+        post_data["id"] = get_next_id(posts)
+        post_data["date"] = date_str
         post_data["lang"] = "fa"
+        if author:
+            post_data["author"] = author
+        posts.append(post_data)
+        save_posts(posts)
+        log.info("Deploying to Vercel...")
+        success = deploy_to_vercel()
+        return post_data, success
+    
+    # Multiple sections -> create series: 1 parent + N children
+    total = len(chunks)
+    log.info(f"📚 Publishing {total} sections as a series...")
+    
+    # Build parent post: series overview with links to all parts
+    parent_id = get_next_id(posts)
+    first_section_title = chunks[0]["title"]
+    parent_title = first_section_title.split(":")[0].strip() if ":" in first_section_title else first_section_title
+    parent_title = f"📚 {parent_title} - {total} بخش"
+    
+    parent_blocks = [{"type": "p", "fa": f"🔖 این مجموعه شامل <strong>{total} بخش</strong> است که هر بخش به یکی از سرفصل‌های اصلی این سند می‌پردازد:"}]
+    for i, ch in enumerate(chunks):
+        link = f"#post-{parent_id + i + 1}"
+        item = f'<a href="{link}">{i+1}. {ch["title"]}</a>'
+        parent_blocks.append({"type": "ul", "fa": [item]})
+    if pdf_link:
+        parent_blocks.append({"type": "p", "fa": f"📄 <strong>مطالعه کامل (PDF اصلی):</strong> <a href=\"{pdf_link}\">دانلود و مطالعه مستقیم</a>"})
+    
+    parent_post = {
+        "id": parent_id,
+        "title": parent_title,
+        "tags": ["مجموعه", "هوش مصنوعی"],
+        "date": date_str,
+        "lang": "fa",
+        "content": parent_blocks,
+        "series": True,
+    }
     if author:
-        post_data["author"] = author
+        parent_post["author"] = author
+    posts.append(parent_post)
     
-    # Add to posts
-    posts.append(post_data)
+    # Process each section -> child post
+    for i, ch in enumerate(chunks):
+        part_num = i + 1
+        meta, enhanced = await format_section_ai(ch["text"], ch["title"], part_num, total, user_info)
+        if pdf_link:
+            enhanced += f"\n\n---\n\n📄 <strong>مطالعه کامل (PDF اصلی):</strong> <a href=\"{pdf_link}\">دانلود و مطالعه مستقیم</a>"
+        child_post = {
+            "id": parent_id + part_num,
+            "parentId": parent_id,
+            "title": meta.get("title", f"[{part_num}/{total}] {ch['title']}"),
+            "tags": meta.get("tags", ["عمومی"]),
+            "date": date_str,
+            "lang": "fa",
+            "series": parent_title,
+            "seriesPart": part_num,
+            "seriesTotal": total,
+            "content": blocks_from_text(enhanced),
+        }
+        if author:
+            child_post["author"] = author
+        posts.append(child_post)
+        log.info(f"✅ Published part {part_num}/{total}: {child_post['title'][:50]}")
     
-    # Save
+    # Save once and deploy once
     save_posts(posts)
-    
-    # Deploy
     log.info("Deploying to Vercel...")
     success = deploy_to_vercel()
-    
-    return post_data, success
+    return parent_post, success
 
 
 # ============== Telegram Bot ==============
