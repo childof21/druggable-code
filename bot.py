@@ -306,7 +306,7 @@ RULES:
 - Use the LAST section marker to capture everything up to the end of the document.
 - If the document has no clear sections (short text, single topic), return {"sections": []}."""
 
-    user_prompt = f"Analyze this document and identify its main sections:\n\n{raw_text[:30000]}"
+    user_prompt = "Analyze this document and identify its main sections:\n\n" + raw_text[:60000]
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
@@ -377,7 +377,25 @@ def split_sections(raw_text, sections):
         chunk_text = raw_text[start:end].strip()
         if chunk_text:
             chunks.append({"title": s.get("title", f"Section {i+1}"), "text": chunk_text})
-    return chunks
+    
+    # Split any oversized chunks (>15000 chars) evenly so AI quality stays high
+    MAX_CHUNK = 15000
+    final_chunks = []
+    for ch in chunks:
+        text = ch["text"]
+        if len(text) <= MAX_CHUNK:
+            final_chunks.append(ch)
+            continue
+        # Split evenly into ~15000-char pieces
+        n = (len(text) + MAX_CHUNK - 1) // MAX_CHUNK
+        piece_size = (len(text) + n - 1) // n
+        for j in range(n):
+            piece = text[j*piece_size:(j+1)*piece_size].strip()
+            if piece:
+                suffix = f" (بخش {j+1})" if n > 1 else ""
+                final_chunks.append({"title": f"{ch['title']}{suffix}", "text": piece})
+        log.info(f"📐 Split oversized section '{ch['title'][:30]}' ({len(text)} chars) into {n} pieces")
+    return final_chunks
 
 
 async def format_section_ai(section_text, section_title, part, total, user_info=""):
