@@ -280,6 +280,24 @@ def _flush_table(blocks, headers, rows):
         blocks.append({"type": "table", "fa": {"headers": headers, "rows": rows}})
 
 
+def rebuild_embeddings():
+    """Regenerate data/vectors.bin + chunks.json so newly published posts are
+    searchable by the blog chat bot. Best-effort: never blocks publishing."""
+    script = os.path.join(BOT_DIR, "scripts", "build_embeddings.py")
+    try:
+        result = subprocess.run(
+            ["python3", script], capture_output=True, text=True, timeout=180,
+            cwd=BOT_DIR)
+        if result.returncode == 0:
+            log.info(f"🔁 Embeddings rebuilt: {result.stdout.strip().splitlines()[-1]}")
+            return True
+        log.error(f"❌ Embedding rebuild failed: {result.stderr[-300:]}")
+        return False
+    except Exception as e:
+        log.error(f"❌ Embedding rebuild error: {e}")
+        return False
+
+
 def deploy_to_vercel():
     """Deploy the updated site to Vercel"""
     vercel_path = "/home/mohammad/.local/bin/vercel"
@@ -590,6 +608,7 @@ async def publish_post(raw_text, user_info="", author="", pdf_link=""):
         posts.append(post_data)
         save_posts(posts)
         log.info("Deploying to Vercel...")
+        rebuild_embeddings()  # keep chat search fresh with the new post
         success = deploy_to_vercel()
         return post_data, success
     
@@ -663,6 +682,7 @@ async def publish_post(raw_text, user_info="", author="", pdf_link=""):
     # Save once and deploy once
     save_posts(posts)
     log.info("Deploying to Vercel...")
+    rebuild_embeddings()  # keep chat search fresh with the new series
     success = deploy_to_vercel()
     return parent_post, success
 

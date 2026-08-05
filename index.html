@@ -217,6 +217,45 @@ footer a{color:var(--accent);text-decoration:none}
   .view-tab{padding:6px 14px;font-size:12px}
 }
 </style>
+<style>
+/* ===== Chat widget ===== */
+#dc-chat-btn{position:fixed;bottom:24px;left:24px;z-index:9999;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#82d5e5,#4aa8c0);color:#020202;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(130,213,229,.35);transition:transform .2s,box-shadow .2s}
+#dc-chat-btn:hover{transform:scale(1.08);box-shadow:0 10px 36px rgba(130,213,229,.5)}
+#dc-chat-btn .dc-badge{position:absolute;top:-2px;right:-2px;background:#b388ff;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #020202}
+#dc-chat{position:fixed;bottom:24px;left:24px;z-index:9998;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100vh - 90px));background:#0b0b0f;border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;transform-origin:bottom left;font-family:var(--font-fa)}
+#dc-chat.open{display:flex;animation:dcPop .25s ease}
+@keyframes dcPop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.dc-head{padding:14px 16px;background:linear-gradient(135deg,rgba(130,213,229,.14),rgba(179,136,255,.10));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.dc-head .dc-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#82d5e5,#b388ff);display:flex;align-items:center;justify-content:center;font-size:18px}
+.dc-head .dc-title{font-size:14px;font-weight:700;color:var(--text)}
+.dc-head .dc-sub{font-size:11px;color:var(--text3);font-family:var(--font-en)}
+.dc-close{margin-left:auto;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px}
+.dc-close:hover{color:var(--text)}
+.dc-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.dc-msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.9;white-space:pre-wrap;word-wrap:break-word}
+.dc-msg.user{align-self:flex-start;background:var(--accent);color:#020202;border-bottom-left-radius:4px;font-weight:500}
+.dc-msg.bot{align-self:flex-end;background:var(--bg3);color:var(--text);border-bottom-right-radius:4px;border:1px solid var(--border)}
+.dc-msg b{color:var(--accent)}
+.dc-msg a{color:var(--accent);text-decoration:underline}
+.dc-typing{align-self:flex-end;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;gap:5px}
+.dc-typing span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dcBlink 1.2s infinite}
+.dc-typing span:nth-child(2){animation-delay:.2s}
+.dc-typing span:nth-child(3){animation-delay:.4s}
+@keyframes dcBlink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.dc-srcs{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-end;max-width:92%}
+.dc-srcs a{font-size:11px;font-family:var(--font-fa);color:var(--accent);background:rgba(130,213,229,.1);border:1px solid rgba(130,213,229,.3);padding:3px 10px;border-radius:20px;text-decoration:none}
+.dc-srcs a:hover{background:rgba(130,213,229,.22)}
+.dc-chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 10px}
+.dc-chips button{font-size:12px;font-family:var(--font-fa);color:var(--text2);background:transparent;border:1px solid var(--border);border-radius:18px;padding:7px 14px;cursor:pointer;transition:.2s}
+.dc-chips button:hover{border-color:var(--accent);color:var(--accent);background:rgba(130,213,229,.08)}
+.dc-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:#0b0b0f}
+.dc-input textarea{flex:1;resize:none;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-fa);font-size:13.5px;padding:10px 12px;line-height:1.7;max-height:100px}
+.dc-input textarea:focus{outline:none;border-color:var(--accent)}
+.dc-input button{width:46px;border-radius:12px;border:none;background:var(--accent);color:#020202;font-size:18px;cursor:pointer}
+.dc-input button:disabled{opacity:.5;cursor:default}
+.dc-err{color:#ff8a8a}
+@media(max-width:480px){#dc-chat-btn{width:52px;height:52px;font-size:23px;bottom:16px;left:16px}#dc-chat{bottom:16px;left:16px}}
+</style>
 </head>
 <body>
 
@@ -599,6 +638,161 @@ function togglePost(el) {
 }
 
 loadData();
+</script>
+<!-- ===== Chat widget ===== -->
+<button id="dc-chat-btn" aria-label="چت با بلاگ"><span class="dc-badge" id="dc-badge" style="display:none">۱</span>💬</button>
+<div id="dc-chat" dir="rtl">
+  <div class="dc-head">
+    <div class="dc-logo">🧬</div>
+    <div>
+      <div class="dc-title">چت با بلاگ</div>
+      <div class="dc-sub">Druggable Code — AI Assistant</div>
+    </div>
+    <button class="dc-close" id="dc-close" aria-label="بستن">✕</button>
+  </div>
+  <div class="dc-msgs" id="dc-msgs"></div>
+  <div class="dc-chips" id="dc-chips"></div>
+  <div class="dc-input">
+    <textarea id="dc-input" rows="1" placeholder="سوالت را بنویس... (مثلاً: RFdiffusion چیست؟)"></textarea>
+    <button id="dc-send" aria-label="ارسال">➤</button>
+  </div>
+</div>
+<script>
+(function () {
+  var btn = document.getElementById('dc-chat-btn');
+  var panel = document.getElementById('dc-chat');
+  var msgs = document.getElementById('dc-msgs');
+  var chips = document.getElementById('dc-chips');
+  var input = document.getElementById('dc-input');
+  var sendBtn = document.getElementById('dc-send');
+  var badge = document.getElementById('dc-badge');
+  var opened = false;
+  var busy = false;
+
+  var SUGGEST = [
+    'RFdiffusion و ProteinMPNN چطور کار می‌کنند؟',
+    'هرسپتین چه مسیری از آزمایشگاه تا تولید طی کرد؟',
+    'AlphaFold 3 چه تفاوتی با نسخه‌های قبلی دارد؟',
+    'هوش مصنوعی عامل‌محور در کشف دارو چیست؟',
+  ];
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function fmt(s) {
+    s = esc(s);
+    s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    s = s.replace(/\(پست\s+(\d+)\)/g, '<a href="#post-$1">(پست $1)</a>');
+    s = s.replace(/پست\s+(\d+)/g, '<a href="#post-$1">پست $1</a>');
+    s = s.replace(/\n/g, '<br>');
+    return s;
+  }
+
+  function addMsg(role, html) {
+    var d = document.createElement('div');
+    d.className = 'dc-msg ' + role;
+    d.innerHTML = html;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d;
+  }
+
+  function showChips() {
+    chips.innerHTML = '';
+    SUGGEST.forEach(function (q) {
+      var b = document.createElement('button');
+      b.textContent = q;
+      b.onclick = function () { input.value = q; send(); };
+      chips.appendChild(b);
+    });
+  }
+
+  function open() {
+    opened = true;
+    panel.classList.add('open');
+    badge.style.display = 'none';
+    if (msgs.children.length === 0) {
+      addMsg('bot', 'سلام! 👋 من دستیار بلاگ <b>Druggable Code</b> هستم. درباره هر موضوعی از بلاگ — از طراحی آنتی‌بادی و ایمونولوژی تا هوش مصنوعی در دارو — می‌توانی از من بپرسی.');
+      showChips();
+    }
+    setTimeout(function(){ input.focus(); }, 150);
+  }
+  function close() { opened = false; panel.classList.remove('open'); }
+
+  btn.onclick = open;
+  document.getElementById('dc-close').onclick = close;
+
+  function send() {
+    var q = input.value.trim();
+    if (!q || busy) return;
+    busy = true;
+    sendBtn.disabled = true;
+    chips.innerHTML = '';
+    input.value = '';
+    input.style.height = 'auto';
+    addMsg('user', fmt(q));
+    var botEl = addMsg('bot', '<span class="dc-typing"><span></span><span></span><span></span></span>');
+    var acc = '';
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      var reader = r.body.getReader();
+      var dec = new TextDecoder();
+      var buf = '';
+      function pump() {
+        return reader.read().then(function (res) {
+          if (res.done) return;
+          buf += dec.decode(res.value, { stream: true });
+          var lines = buf.split('\n');
+          buf = lines.pop() || '';
+          lines.forEach(function (line) {
+            var s = line.trim();
+            if (!s.startsWith('data:')) return;
+            try { var ev = JSON.parse(s.slice(5).trim()); }
+            catch (e) { return; }
+            if (ev.t) {
+              acc += ev.t;
+              botEl.innerHTML = fmt(acc);
+              msgs.scrollTop = msgs.scrollHeight;
+            } else if (ev.sources) {
+              var box = document.createElement('div');
+              box.className = 'dc-srcs';
+              ev.sources.forEach(function (src) {
+                var a = document.createElement('a');
+                a.href = '#post-' + src.id;
+                a.textContent = '📄 پست ' + src.id;
+                a.title = src.title;
+                box.appendChild(a);
+              });
+              msgs.appendChild(box);
+              msgs.scrollTop = msgs.scrollHeight;
+            } else if (ev.error) {
+              botEl.innerHTML = '<span class="dc-err">⚠️ ' + esc(ev.error) + '</span>';
+            }
+          });
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function (e) {
+      botEl.innerHTML = '<span class="dc-err">⚠️ خطای اتصال — دوباره تلاش کن.</span>';
+    }).finally(function () {
+      busy = false;
+      sendBtn.disabled = false;
+    });
+  }
+
+  sendBtn.onclick = send;
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  });
+  input.addEventListener('input', function () {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+  });
+})();
 </script>
 </body>
 </html>
