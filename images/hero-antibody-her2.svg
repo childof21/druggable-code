@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#0e3a44"/>
+      <stop offset="60%" stop-color="#05181d"/>
+      <stop offset="100%" stop-color="#020202"/>
+    </radialGradient>
+    <linearGradient id="mem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#12333b"/>
+      <stop offset="100%" stop-color="#06171b"/>
+    </linearGradient>
+    <linearGradient id="ab" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a8ecf7"/>
+      <stop offset="100%" stop-color="#4fb8cc"/>
+    </linearGradient>
+    <linearGradient id="her2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#82d5e5"/>
+      <stop offset="100%" stop-color="#2b7f92"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="520" fill="url(#glow)"/>
+
+  <!-- membrane -->
+  <rect x="0" y="400" width="1200" height="120" fill="url(#mem)" opacity="0.9"/>
+  <ellipse cx="600" cy="400" rx="600" ry="14" fill="#1c5563" opacity="0.6"/>
+  <g fill="#2b7f92" opacity="0.5">
+    <circle cx="80" cy="430" r="4"/><circle cx="170" cy="450" r="3"/><circle cx="260" cy="428" r="4"/>
+    <circle cx="360" cy="455" r="3"/><circle cx="480" cy="432" r="4"/><circle cx="700" cy="445" r="3"/>
+    <circle cx="830" cy="425" r="4"/><circle cx="960" cy="452" r="3"/><circle cx="1080" cy="435" r="4"/>
+  </g>
+
+  <!-- HER2 dimer: left receptor (with bound antibody) -->
+  <g>
+    <!-- transmembrane -->
+    <rect x="430" y="330" width="26" height="90" rx="13" fill="url(#her2)" opacity="0.85"/>
+    <!-- ECD lobes (domain I-IV) -->
+    <ellipse cx="443" cy="292" rx="34" ry="26" fill="url(#her2)"/>
+    <ellipse cx="443" cy="252" rx="26" ry="22" fill="#9fdeeb"/>
+    <ellipse cx="418" cy="322" rx="16" ry="14" fill="#3c97ab"/>
+    <ellipse cx="468" cy="322" rx="16" ry="14" fill="#3c97ab"/>
+    <!-- domain IV highlight ring -->
+    <ellipse cx="443" cy="292" rx="36" ry="28" fill="none" stroke="#e8fbff" stroke-width="2.5" stroke-dasharray="6 5" opacity="0.9"/>
+    <text x="512" y="296" fill="#e8fbff" font-size="15" font-weight="bold">Domain IV</text>
+  </g>
+
+  <!-- HER2 dimer: right receptor -->
+  <g>
+    <rect x="710" y="330" width="26" height="90" rx="13" fill="url(#her2)" opacity="0.85"/>
+    <ellipse cx="723" cy="292" rx="34" ry="26" fill="url(#her2)"/>
+    <ellipse cx="723" cy="252" rx="26" ry="22" fill="#9fdeeb"/>
+    <ellipse cx="698" cy="322" rx="16" ry="14" fill="#3c97ab"/>
+    <ellipse cx="748" cy="322" rx="16" ry="14" fill="#3c97ab"/>
+  </g>
+
+  <!-- Antibody Y-shape (trastuzumab) binding left HER2 -->
+  <g>
+    <!-- Fab arms -->
+    <g transform="rotate(-28 470 120)">
+      <rect x="446" y="80" width="48" height="92" rx="24" fill="url(#ab)" filter="url(#soft)" opacity="0.5"/>
+      <rect x="446" y="80" width="48" height="92" rx="24" fill="url(#ab)"/>
+    </g>
+    <g transform="rotate(20 508 140)">
+      <rect x="486" y="96" width="46" height="88" rx="23" fill="url(#ab)" filter="url(#soft)" opacity="0.5"/>
+      <rect x="486" y="96" width="46" height="88" rx="23" fill="url(#ab)"/>
+    </g>
+    <!-- Fab tips touching domain IV -->
+    <circle cx="473" cy="142" r="17" fill="#d9f6fc"/>
+    <circle cx="503" cy="150" r="16" fill="#d9f6fc"/>
+    <!-- hinge + Fc stem -->
+    <rect x="487" y="160" width="34" height="40" rx="12" fill="url(#ab)"/>
+    <rect x="480" y="196" width="48" height="92" rx="24" fill="url(#ab)" filter="url(#soft)" opacity="0.5"/>
+    <rect x="480" y="196" width="48" height="92" rx="24" fill="url(#ab)"/>
+  </g>
+
+  <!-- labels -->
+  <g fill="#9adbe8" font-size="14">
+    <text x="392" y="120" text-anchor="end">Fab (اتصال به Domain IV)</text>
+    <text x="550" y="268" fill="#d9f6fc" font-weight="bold">Fc</text>
+    <text x="390" y="460" text-anchor="end">غشای سلول سرطانی</text>
+  </g>
+  <g fill="#e8fbff" font-size="16" font-weight="bold">
+    <text x="600" y="60" text-anchor="middle">آنتیبادی IgG1 — تراستوزوماب (هرسپتین)</text>
+  </g>
+  <g fill="#7fb6c2" font-size="13">
+    <text x="600" y="84" text-anchor="middle">HER2 (ErbB2) — گیرنده تیروزین کینازی نوع ۱</text>
+  </g>
+</svg>

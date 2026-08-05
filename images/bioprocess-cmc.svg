@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#05181d"/>
+      <stop offset="100%" stop-color="#020202"/>
+    </linearGradient>
+    <linearGradient id="box" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#12333b"/>
+      <stop offset="100%" stop-color="#0a242b"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="420" fill="url(#bg)"/>
+
+  <!-- flow boxes -->
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <!-- 1. CHO cell -->
+    <rect x="40" y="120" width="150" height="80" rx="14" fill="url(#box)" stroke="#82d5e5" stroke-width="2"/>
+    <circle cx="115" cy="140" r="14" fill="#82d5e5" opacity="0.85"/>
+    <circle cx="115" cy="160" r="14" fill="#4fb8cc" opacity="0.6"/>
+    <text x="115" y="222" text-anchor="middle" fill="#e8fbff" font-size="14" font-weight="bold">سلول CHO</text>
+    <text x="115" y="240" text-anchor="middle" fill="#9adbe8" font-size="11">بیان آنتیبادی</text>
+
+    <!-- 2. Bioreactor -->
+    <rect x="240" y="120" width="150" height="80" rx="14" fill="url(#box)" stroke="#82d5e5" stroke-width="2"/>
+    <rect x="290" y="132" width="50" height="56" rx="8" fill="#0a242b" stroke="#4fb8cc" stroke-width="1.5"/>
+    <path d="M300 160 q15 -14 30 0" stroke="#82d5e5" stroke-width="2" fill="none"/>
+    <text x="315" y="222" text-anchor="middle" fill="#e8fbff" font-size="14" font-weight="bold">بیوراکتور</text>
+    <text x="315" y="240" text-anchor="middle" fill="#9adbe8" font-size="11">کشت در مقیاس بزرگ</text>
+
+    <!-- 3. Protein A -->
+    <rect x="440" y="120" width="150" height="80" rx="14" fill="url(#box)" stroke="#82d5e5" stroke-width="2"/>
+    <rect x="485" y="132" width="60" height="56" rx="6" fill="#0a242b" stroke="#4fb8cc" stroke-width="1.5"/>
+    <g stroke="#82d5e5" stroke-width="2">
+      <line x1="492" y1="140" x2="538" y2="140"/>
+      <line x1="492" y1="152" x2="538" y2="152"/>
+      <line x1="492" y1="164" x2="538" y2="164"/>
+      <line x1="492" y1="176" x2="538" y2="176"/>
+    </g>
+    <text x="515" y="222" text-anchor="middle" fill="#e8fbff" font-size="14" font-weight="bold">کروماتوگرافی Protein A</text>
+    <text x="515" y="240" text-anchor="middle" fill="#9adbe8" font-size="11">جذب اختصاصی Fc</text>
+
+    <!-- 4. Viral inactivation -->
+    <rect x="640" y="120" width="150" height="80" rx="14" fill="url(#box)" stroke="#82d5e5" stroke-width="2"/>
+    <text x="715" y="152" text-anchor="middle" fill="#e8fbff" font-size="13">غیرفعالسازی</text>
+    <text x="715" y="172" text-anchor="middle" fill="#e8fbff" font-size="13">ویروسی</text>
+    <text x="715" y="222" text-anchor="middle" fill="#9adbe8" font-size="11">pH پایین + فیلتر ویروسی</text>
+
+    <!-- 5. Polishing -->
+    <rect x="840" y="120" width="150" height="80" rx="14" fill="url(#box)" stroke="#82d5e5" stroke-width="2"/>
+    <text x="915" y="152" text-anchor="middle" fill="#e8fbff" font-size="13">پولیش</text>
+    <text x="915" y="172" text-anchor="middle" fill="#e8fbff" font-size="13">CEX / AEX</text>
+    <text x="915" y="222" text-anchor="middle" fill="#9adbe8" font-size="11">تبادل یونی</text>
+
+    <!-- 6. Final -->
+    <rect x="1040" y="120" width="130" height="80" rx="14" fill="#0e3a44" stroke="#e8fbff" stroke-width="2"/>
+    <text x="1105" y="152" text-anchor="middle" fill="#e8fbff" font-size="14" font-weight="bold">داروی نهایی</text>
+    <text x="1105" y="172" text-anchor="middle" fill="#d9f6fc" font-size="12">خلوص &gt; ۹۹٪</text>
+    <text x="1105" y="222" text-anchor="middle" fill="#9adbe8" font-size="11">فرمولاسیون نهایی</text>
+
+    <!-- arrows -->
+    <g stroke="#82d5e5" stroke-width="3" fill="none">
+      <path d="M190 160 h44" marker-end=""/>
+      <polygon points="238,154 250,160 238,166" fill="#82d5e5" stroke="none"/>
+      <path d="M390 160 h44"/>
+      <polygon points="438,154 450,160 438,166" fill="#82d5e5" stroke="none"/>
+      <path d="M590 160 h44"/>
+      <polygon points="638,154 650,160 638,166" fill="#82d5e5" stroke="none"/>
+      <path d="M790 160 h44"/>
+      <polygon points="838,154 850,160 838,166" fill="#82d5e5" stroke="none"/>
+      <path d="M990 160 h44"/>
+      <polygon points="1038,154 1050,160 1038,166" fill="#82d5e5" stroke="none"/>
+    </g>
+
+    <!-- bottom annotation -->
+    <text x="600" y="320" text-anchor="middle" fill="#e8fbff" font-size="15" font-weight="bold">مسیر تولید و خالصسازی آنتیبادی مونوکلونال (CMC)</text>
+    <text x="600" y="344" text-anchor="middle" fill="#7fb6c2" font-size="12">از انتخاب کلون CHO تا داروی نهایی با خلوص بالا — هر مرحله یک سد کیفی مستقل است</text>
+  </g>
+</svg>
