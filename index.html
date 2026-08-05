@@ -222,7 +222,7 @@ footer a{color:var(--accent);text-decoration:none}
 #dc-chat-btn{position:fixed;bottom:24px;left:24px;z-index:9999;width:52px;height:52px;border-radius:14px;border:1px solid rgba(130,213,229,.28);background:rgba(130,213,229,.07);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.45);transition:background .25s,border-color .25s,transform .25s,box-shadow .25s}
 #dc-chat-btn:hover{background:rgba(130,213,229,.16);border-color:rgba(130,213,229,.55);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.5)}
 #dc-chat-btn svg{width:22px;height:22px}
-#dc-chat{position:fixed;bottom:24px;left:24px;z-index:9998;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100vh - 90px));background:#0b0b0f;border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;transform-origin:bottom left;font-family:var(--font-fa)}
+#dc-chat{position:fixed;bottom:24px;left:24px;z-index:9998;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100vh - 90px));background:var(--bg2);border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;transform-origin:bottom left;font-family:var(--font-fa)}
 #dc-chat.open{display:flex;animation:dcPop .25s ease}
 @keyframes dcPop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .dc-head{padding:14px 16px;background:linear-gradient(135deg,rgba(130,213,229,.14),rgba(179,136,255,.10));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -248,13 +248,18 @@ footer a{color:var(--accent);text-decoration:none}
 .dc-chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 10px}
 .dc-chips button{font-size:12px;font-family:var(--font-fa);color:var(--text2);background:transparent;border:1px solid var(--border);border-radius:18px;padding:7px 14px;cursor:pointer;transition:.2s}
 .dc-chips button:hover{border-color:var(--accent);color:var(--accent);background:rgba(130,213,229,.08)}
-.dc-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:#0b0b0f}
+.dc-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--bg2)}
 .dc-input textarea{flex:1;resize:none;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-fa);font-size:13.5px;padding:10px 12px;line-height:1.7;max-height:100px}
 .dc-input textarea:focus{outline:none;border-color:var(--accent)}
 .dc-input button{width:46px;border-radius:12px;border:none;background:var(--accent);color:#020202;font-size:18px;cursor:pointer}
 .dc-input button:disabled{opacity:.5;cursor:default}
 .dc-err{color:#ff8a8a}
 @media(max-width:480px){#dc-chat-btn{width:48px;height:48px;border-radius:13px;bottom:16px;left:16px}#dc-chat{bottom:16px;left:16px}}
+/* light theme: follow the site's data-theme switch */
+[data-theme="light"] #dc-chat{box-shadow:0 20px 60px rgba(0,0,0,.18)}
+[data-theme="light"] #dc-chat-btn{background:var(--bg2);border-color:var(--border);color:var(--text2);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+[data-theme="light"] #dc-chat-btn:hover{background:var(--bg3);border-color:var(--accent);color:var(--accent)}
+[data-theme="light"] .dc-head{background:linear-gradient(135deg,rgba(130,213,229,.20),rgba(179,136,255,.12))}
 </style>
 </head>
 <body>
