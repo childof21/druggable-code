@@ -220,9 +220,9 @@ footer a{color:var(--accent);text-decoration:none}
 <style>
 /* ===== Chat widget — professional redesign ===== */
 /* header chat button (previous icon style + label) */
-.header-chat{display:flex;align-items:center;gap:7px;padding:7px 14px;margin-right:2px;font-family:var(--font-fa);font-size:12.5px;font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
-.header-chat svg{width:16px;height:16px;flex-shrink:0}
-.header-chat:hover{color:var(--accent);border-color:rgba(130,213,229,.5);background:rgba(130,213,229,.08)}
+.header-links .header-chat{display:flex;align-items:center;gap:7px;padding:7px 14px;margin-right:2px;font-family:var(--font-fa);font-size:12.5px;font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.header-links .header-chat svg{width:16px;height:16px;flex-shrink:0}
+.header-links .header-chat:hover{color:var(--accent);border-color:rgba(130,213,229,.5);background:rgba(130,213,229,.08)}
 #dc-chat{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;overflow:hidden;font-family:var(--font-fa);--dc-r-sm:10px;--dc-r-md:14px;--dc-r-lg:18px}
 #dc-chat.open{display:flex;animation:dcFade .2s ease}
 @keyframes dcFade{from{opacity:0}to{opacity:1}}
@@ -272,8 +272,8 @@ footer a{color:var(--accent);text-decoration:none}
 .dc-input button svg{width:20px;height:20px}
 .dc-err{color:#f87171;font-size:13px;line-height:1.8}
 /* focus visibility */
-.dc-close:focus-visible,.header-chat:focus-visible,.dc-chips button:focus-visible,.dc-input button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-@media(max-width:640px){.dc-msg{max-width:88%;font-size:14.5px}.dc-msgs{padding:20px 14px 12px;gap:14px}.dc-input{padding:10px 12px 12px}.dc-head{padding:0 12px;height:58px}.dc-chips{padding:6px 12px 10px}.header-chat{padding:6px 10px;font-size:11.5px}.header-chat svg{width:14px;height:14px}}
+.dc-close:focus-visible,.header-links .header-chat:focus-visible,.dc-chips button:focus-visible,.dc-input button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:640px){.dc-msg{max-width:88%;font-size:14.5px}.dc-msgs{padding:20px 14px 12px;gap:14px}.dc-input{padding:10px 12px 12px}.dc-head{padding:0 12px;height:58px}.dc-chips{padding:6px 12px 10px}.header-links .header-chat{padding:6px 10px;font-size:11.5px}.header-links .header-chat svg{width:14px;height:14px}}
 </style>
 </head>
 <body>
