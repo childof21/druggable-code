@@ -218,46 +218,62 @@ footer a{color:var(--accent);text-decoration:none}
 }
 </style>
 <style>
-/* ===== Chat widget ===== */
-#dc-chat-btn{position:fixed;bottom:24px;left:24px;z-index:9999;width:52px;height:52px;border-radius:14px;border:1px solid rgba(130,213,229,.28);background:rgba(130,213,229,.07);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.45);transition:background .25s,border-color .25s,transform .25s,box-shadow .25s}
-#dc-chat-btn:hover{background:rgba(130,213,229,.16);border-color:rgba(130,213,229,.55);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.5)}
+/* ===== Chat widget — professional redesign ===== */
+#dc-chat-btn{position:fixed;bottom:24px;left:24px;z-index:9999;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#020202;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(130,213,229,.28),0 10px 32px rgba(0,0,0,.35);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
+#dc-chat-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(130,213,229,.38),0 14px 40px rgba(0,0,0,.4)}
+#dc-chat-btn:active{transform:translateY(0) scale(.96)}
 #dc-chat-btn svg{width:22px;height:22px}
-#dc-chat{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;overflow:hidden;font-family:var(--font-fa)}
-#dc-chat.open{display:flex;animation:dcFade .18s ease}
+#dc-chat{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;overflow:hidden;font-family:var(--font-fa);--dc-r-sm:10px;--dc-r-md:14px;--dc-r-lg:18px}
+#dc-chat.open{display:flex;animation:dcFade .2s ease}
 @keyframes dcFade{from{opacity:0}to{opacity:1}}
-.dc-head{padding:14px max(16px,calc((100vw - 860px)/2));background:color-mix(in srgb,var(--bg2) 65%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:2}
-.dc-head .dc-logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#82d5e5,#b388ff);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.dc-head .dc-title{font-size:15px;font-weight:700;color:var(--text)}
-.dc-head .dc-sub{font-size:11px;color:var(--text3);font-family:var(--font-en)}
-.dc-close{margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:38px;height:38px;border-radius:11px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
-.dc-close:hover{color:var(--text);border-color:var(--accent)}
-.dc-msgs{flex:1;overflow-y:auto;padding:28px max(16px,calc((100vw - 860px)/2));display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-.dc-msg{max-width:82%;padding:12px 18px;border-radius:16px;font-size:15px;line-height:2;white-space:pre-wrap;word-wrap:break-word}
-.dc-msg.user{align-self:flex-start;background:var(--accent);color:#020202;border-bottom-left-radius:6px;font-weight:500}
-.dc-msg.bot{align-self:flex-end;background:var(--bg3);color:var(--text);border-bottom-right-radius:6px;border:1px solid var(--border)}
-.dc-msg b{color:var(--accent)}
-.dc-msg a{color:var(--accent);text-decoration:underline}
-.dc-typing{align-self:flex-end;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px 18px;display:flex;gap:5px}
-.dc-typing span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dcBlink 1.2s infinite}
-.dc-typing span:nth-child(2){animation-delay:.2s}
-.dc-typing span:nth-child(3){animation-delay:.4s}
-@keyframes dcBlink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-.dc-srcs{display:flex;flex-wrap:wrap;gap:8px;align-self:flex-end;max-width:82%}
-.dc-srcs a{font-size:12px;font-family:var(--font-fa);color:var(--accent);background:rgba(130,213,229,.1);border:1px solid rgba(130,213,229,.3);padding:5px 14px;border-radius:20px;text-decoration:none}
-.dc-srcs a:hover{background:rgba(130,213,229,.22)}
-.dc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:14px max(16px,calc((100vw - 860px)/2)) 4px}
-.dc-chips button{font-size:13px;font-family:var(--font-fa);color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:9px 16px;cursor:pointer;transition:.2s}
-.dc-chips button:hover{border-color:var(--accent);color:var(--accent);background:rgba(130,213,229,.08)}
-.dc-input{display:flex;gap:10px;align-items:flex-end;padding:14px max(16px,calc((100vw - 860px)/2)) 20px;border-top:1px solid var(--border);background:var(--bg)}
-.dc-input textarea{flex:1;resize:none;background:var(--bg3);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font-fa);font-size:14.5px;padding:12px 16px;line-height:1.8;max-height:120px}
-.dc-input textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(130,213,229,.12)}
-.dc-input button{width:50px;height:50px;border-radius:14px;border:none;background:var(--accent);color:#020202;font-size:19px;cursor:pointer;flex-shrink:0;transition:opacity .2s}
-.dc-input button:disabled{opacity:.5;cursor:default}
-.dc-err{color:#ff8a8a}
-@media(max-width:480px){#dc-chat-btn{width:48px;height:48px;border-radius:13px;bottom:16px;left:16px}}
-/* light theme: follow the site's data-theme switch */
-[data-theme="light"] #dc-chat-btn{background:var(--bg2);border-color:var(--border);color:var(--text2);box-shadow:0 6px 20px rgba(0,0,0,.12)}
-[data-theme="light"] #dc-chat-btn:hover{background:var(--bg3);border-color:var(--accent);color:var(--accent)}
+/* header */
+.dc-head{padding:0 max(16px,calc((100vw - 800px)/2));height:64px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:relative;z-index:2;flex-shrink:0}
+.dc-head .dc-logo{width:36px;height:36px;border-radius:var(--dc-r-sm);background:linear-gradient(135deg,#82d5e5,#b388ff);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 10px rgba(130,213,229,.28)}
+.dc-head .dc-titles{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dc-head .dc-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.01em;line-height:1.35}
+.dc-head .dc-status{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text3)}
+.dc-head .dc-status::before{content:'';width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.14)}
+.dc-close{margin-left:auto;width:36px;height:36px;border-radius:var(--dc-r-sm);background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
+.dc-close:hover{color:var(--text);border-color:var(--text3);background:var(--bg3)}
+.dc-close svg{width:16px;height:16px}
+/* messages */
+.dc-msgs{flex:1;overflow-y:auto;padding:32px max(16px,calc((100vw - 800px)/2)) 16px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.dc-msgs::-webkit-scrollbar{width:8px}
+.dc-msgs::-webkit-scrollbar-track{background:transparent}
+.dc-msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.dc-msgs::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+.dc-msg{max-width:78%;padding:12px 18px;border-radius:var(--dc-r-lg);font-size:15px;line-height:1.95;white-space:pre-wrap;word-wrap:break-word;animation:dcMsgIn .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes dcMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dc-msg.user{align-self:flex-start;background:var(--accent);color:#020202;font-weight:500;border-bottom-right-radius:6px}
+.dc-msg.bot{align-self:flex-end;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:6px}
+.dc-msg b{color:var(--accent);font-weight:700}
+.dc-msg a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.dc-typing{align-self:flex-end;background:var(--bg3);border:1px solid var(--border);border-radius:var(--dc-r-lg);border-bottom-left-radius:6px;padding:15px 18px;display:flex;gap:5px;animation:dcMsgIn .2s ease}
+.dc-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:dcBlink 1.3s ease-in-out infinite}
+.dc-typing span:nth-child(2){animation-delay:.18s}
+.dc-typing span:nth-child(3){animation-delay:.36s}
+@keyframes dcBlink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+.dc-srcs{display:flex;flex-wrap:wrap;gap:8px;align-self:flex-end;max-width:78%;animation:dcMsgIn .28s cubic-bezier(.2,.8,.2,1)}
+.dc-srcs a{font-size:12px;font-weight:500;font-family:var(--font-fa);color:var(--accent);background:rgba(130,213,229,.08);border:1px solid rgba(130,213,229,.25);padding:5px 14px;border-radius:var(--dc-r-full,999px);text-decoration:none;transition:all .18s}
+.dc-srcs a:hover{background:rgba(130,213,229,.18);border-color:rgba(130,213,229,.5)}
+.dc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px max(16px,calc((100vw - 800px)/2)) 12px;flex-shrink:0}
+.dc-chips button{font-size:13px;font-weight:500;font-family:var(--font-fa);color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:var(--dc-r-full,999px);padding:9px 18px;cursor:pointer;transition:all .18s}
+.dc-chips button:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.dc-chips button:active{transform:translateY(0)}
+/* input */
+.dc-input{display:flex;gap:10px;align-items:flex-end;padding:12px max(16px,calc((100vw - 800px)/2)) 16px;border-top:1px solid var(--border);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);flex-shrink:0}
+.dc-input textarea{flex:1;resize:none;background:var(--bg3);border:1px solid var(--border);border-radius:var(--dc-r-md);color:var(--text);font-family:var(--font-fa);font-size:14.5px;line-height:1.8;padding:12px 16px;max-height:120px;transition:border-color .18s,box-shadow .18s}
+.dc-input textarea::placeholder{color:var(--text3)}
+.dc-input textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(130,213,229,.14)}
+.dc-input button{width:48px;height:48px;border-radius:var(--dc-r-md);border:none;cursor:pointer;flex-shrink:0;background:var(--accent);color:#020202;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(130,213,229,.25);transition:all .18s}
+.dc-input button:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(130,213,229,.35)}
+.dc-input button:active{transform:translateY(0) scale(.96)}
+.dc-input button:disabled{opacity:.45;cursor:default;transform:none;box-shadow:none}
+.dc-input button svg{width:20px;height:20px}
+.dc-err{color:#f87171;font-size:13px;line-height:1.8}
+/* focus visibility */
+#dc-chat-btn:focus-visible,.dc-close:focus-visible,.dc-chips button:focus-visible,.dc-input button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:640px){#dc-chat-btn{width:50px;height:50px;border-radius:13px;bottom:18px;left:18px}.dc-msg{max-width:88%;font-size:14.5px}.dc-msgs{padding:20px 14px 12px;gap:14px}.dc-input{padding:10px 12px 12px}.dc-head{padding:0 12px;height:58px}.dc-chips{padding:6px 12px 10px}}
 </style>
 </head>
 <body>
@@ -647,17 +663,17 @@ loadData();
 <div id="dc-chat" dir="rtl">
   <div class="dc-head">
     <div class="dc-logo">🧬</div>
-    <div>
+    <div class="dc-titles">
       <div class="dc-title">چت با بلاگ</div>
-      <div class="dc-sub">Druggable Code — AI Assistant</div>
+      <div class="dc-status">آنلاین</div>
     </div>
-    <button class="dc-close" id="dc-close" aria-label="بستن">✕</button>
+    <button class="dc-close" id="dc-close" aria-label="بستن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   </div>
   <div class="dc-msgs" id="dc-msgs"></div>
   <div class="dc-chips" id="dc-chips"></div>
   <div class="dc-input">
     <textarea id="dc-input" rows="1" placeholder="سوالت را بنویس... (مثلاً: RFdiffusion چیست؟)"></textarea>
-    <button id="dc-send" aria-label="ارسال">➤</button>
+    <button id="dc-send" aria-label="ارسال"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
   </div>
 </div>
 <script>
