@@ -79,6 +79,7 @@ async def format_with_ai(raw_text, user_info="", pdf_link=""):
   "title": "Persian title (5-12 words, with emoji)",
   "titleEn": "English title (optional)",
   "tags": ["3-5 Persian tags"],
+  "keywords_en": ["2-4 SHORT English keywords for image search"],
   "enhanced_text": "the COMPLETE text rewritten in clear, educational Persian with highlights, emojis, and tables"
 }
 
@@ -94,6 +95,7 @@ RULES:
 7. Use ONLY HTML tags. NEVER use markdown (** or * for bold/italic). NEVER use <mark>. NEVER use backticks (`) for code.
 8. Split text into readable paragraphs (2-4 sentences each). Use blank lines between paragraph breaks. Preserve ALL paragraphs from the original.
 9. Tags from: ['هوش مصنوعی', 'مدل‌های زبانی', 'مهندسی پروتئین', 'ESM3', 'PLM', 'طراحی دارو', 'سرمایه‌گذاری', 'تولید دارو', 'آنتی‌بادی مونوکلونال', 'بیوتکنولوژی', 'سلول مجازی', 'اوپن‌سورس', 'ایمونولوژی', 'بیوانفورماتیک']
+10. "keywords_en" must contain 2-4 SHORT English keywords (Latin, lowercase, e.g. "cryo-em", "antibody", "protein structure") describing the MAIN topics — these are used to search for images on Wikimedia Commons.
 
 Output ONLY valid JSON."""
 
@@ -248,7 +250,8 @@ Output ONLY valid JSON."""
         "titleEn": meta.get("titleEn", ""),
         "tags": meta.get("tags", ["عمومی"]),
         "lang": meta.get("lang", "fa"),
-        "content": content_blocks
+        "content": content_blocks,
+        "_keywords": meta.get("keywords_en", [])
     }
     
     return post_data
@@ -291,6 +294,126 @@ def deploy_to_vercel():
     else:
         log.error(f"❌ Deploy failed: {result.stderr}")
         return False
+
+
+# ══════════ Internet images (Wikimedia Commons) — best-effort, never blocks publishing ══════════
+COMMONS_UA = "DruggableCodeBot/1.0 (blog image search; license-compliant)"
+ALLOWED_LIC = ("CC BY", "CC0", "Public domain")
+BLOCKED_LIC = ("NC", "ND", "Fair", "Reserved", "GFDL")
+
+
+def fetch_commons_images(queries, max_images=3):
+    """Search Wikimedia Commons, download relevant images to images/, return entries.
+
+    Each entry: {"file": "images/xxx.jpg", "title": "File:...", "lic": "CC BY-SA 4.0"}.
+    Filters: jpg/png only, width >= 500, free license (CC BY* / CC0 / Public domain).
+    """
+    import urllib.request, urllib.parse, json, time, re
+    img_dir = BOT_DIR / "images"
+    img_dir.mkdir(exist_ok=True)
+    results, seen = [], set()
+    for query in queries:
+        if len(results) >= max_images:
+            break
+        try:
+            url = ("https://commons.wikimedia.org/w/api.php?action=query&generator=search"
+                   f"&gsrsearch={urllib.parse.quote(query)}&gsrnamespace=6&gsrlimit=8"
+                   "&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=1400&format=json")
+            req = urllib.request.Request(url, headers={"User-Agent": COMMONS_UA})
+            d = json.loads(urllib.request.urlopen(req, timeout=25).read())
+            for pid, p in (d.get("query", {}).get("pages", {}) or {}).items():
+                if len(results) >= max_images:
+                    break
+                ii = (p.get("imageinfo") or [{}])[0]
+                thumb = ii.get("thumburl") or ii.get("url")
+                title = p.get("title", "")
+                if not thumb or title in seen:
+                    continue
+                if not re.search(r"\.(jpe?g|png)$", thumb.split("?")[0], re.I):
+                    continue
+                if (ii.get("thumbwidth") or 0) < 500:
+                    continue
+                lic = ((ii.get("extmetadata", {}).get("LicenseShortName") or {}).get("value", "") or "")
+                if not lic or not any(a in lic for a in ALLOWED_LIC) or any(b in lic for b in BLOCKED_LIC):
+                    continue
+                safe = re.sub(r"[^a-z0-9]+", "-", title.replace("File:", "").lower())[:60].strip("-") or f"img-{len(results)}"
+                dest = img_dir / f"{safe}.jpg"
+                try:
+                    req2 = urllib.request.Request(thumb, headers={"User-Agent": COMMONS_UA})
+                    data = urllib.request.urlopen(req2, timeout=60).read()
+                    if len(data) < 20000:
+                        continue  # placeholder / too small
+                    dest.write_bytes(data)
+                except Exception:
+                    continue
+                seen.add(title)
+                results.append({"file": f"images/{safe}.jpg", "title": title, "lic": lic})
+                log.info(f"🖼️ Commons image: {safe}.jpg | {lic}")
+                time.sleep(0.6)
+        except Exception as e:
+            log.error(f"Commons search failed for '{query}': {e}")
+        time.sleep(1.5)
+    return results
+
+
+def _append_attributions(entries):
+    """Append license attribution lines for downloaded images."""
+    try:
+        with open(BOT_DIR / "images" / "ATTRIBUTION.txt", "a", encoding="utf-8") as f:
+            for e in entries:
+                f.write(f"- {e['file']} — {e['title']} — {e['lic']}\n")
+    except Exception:
+        pass
+
+
+def insert_images_into_post(post_data, entries, base_url="https://druggable-code.vercel.app"):
+    """Insert img blocks into post content at readable positions (after intro / mid / 75%)."""
+    content = post_data.get("content") or []
+    n = len(content)
+    if not entries or n < 3:
+        return post_data
+    positions = []
+    if n >= 6:
+        positions.append(min(2, n - 1))
+    if n >= 12:
+        positions.append(n // 2)
+    if n >= 18:
+        positions.append(int(n * 0.75))
+    if not positions:
+        positions = [min(2, n - 1)]
+    positions = sorted(set(p for p in positions if 0 < p < n))[:len(entries)]
+    for i, pos in enumerate(positions):
+        e = entries[i]
+        fname = e["file"].split("/")[-1]
+        clean = e["title"].replace("File:", "").rsplit(".", 1)[0].replace("-", " ").strip()[:70]
+        block = {"type": "img",
+                 "src": f"{base_url}/images/{fname}",
+                 "alt": clean,
+                 "caption": f"شکل {i+1}: {clean} (منبع: Wikimedia Commons — {e['lic']})"}
+        content.insert(pos, block)
+    post_data["content"] = content
+    return post_data
+
+
+def derive_image_queries(post_data, raw_text):
+    """Build Commons search queries from AI keywords + English terms found in the text."""
+    import re
+    queries = []
+    for kw in (post_data.get("_keywords") or []):
+        kw = str(kw).strip().lower()
+        if kw and kw not in queries:
+            queries.append(kw)
+    if post_data.get("titleEn"):
+        queries.append(str(post_data["titleEn"])[:60])
+    latin = re.findall(r"[A-Za-z][A-Za-z0-9+\-]{2,}", raw_text or "")
+    stop = {"the", "and", "for", "with", "from", "that", "this", "are", "was", "were", "not",
+            "protein", "proteins", "cell", "cells", "human", "drug", "drugs", "using", "based",
+            "their", "into", "after", "between", "about", "more", "than", "which", "will", "may"}
+    for w in latin:
+        wl = w.lower()
+        if wl not in stop and wl not in queries and len(queries) < 6:
+            queries.append(wl)
+    return [q for q in queries if q][:6]
 
 
 async def detect_sections(raw_text):
@@ -560,6 +683,16 @@ async def publish_post(raw_text, user_info="", author="", pdf_link=""):
     if len(chunks) < 2:
         log.info("📄 No multiple sections detected - publishing as single post")
         post_data = await format_with_ai(raw_text, user_info, pdf_link)
+        # 🖼️ Add relevant images from Wikimedia Commons (best-effort, never blocks publishing)
+        try:
+            queries = derive_image_queries(post_data, raw_text)
+            entries = fetch_commons_images(queries, max_images=3)
+            post_data = insert_images_into_post(post_data, entries)
+            _append_attributions(entries)
+            log.info(f"🖼️ Added {len(entries)} image(s) to post")
+        except Exception as e:
+            log.error(f"Image step failed (publishing without images): {e}")
+        post_data.pop("_keywords", None)
         post_data["id"] = get_next_id(posts)
         post_data["date"] = date_str
         post_data["lang"] = "fa"
@@ -600,6 +733,14 @@ async def publish_post(raw_text, user_info="", author="", pdf_link=""):
     }
     if author:
         parent_post["author"] = author
+    # 🖼️ One relevant image for the series overview post (best-effort)
+    try:
+        queries = derive_image_queries(parent_post, raw_text)
+        entries = fetch_commons_images(queries, max_images=1)
+        parent_post = insert_images_into_post(parent_post, entries)
+        _append_attributions(entries)
+    except Exception as e:
+        log.error(f"Series image step failed: {e}")
     posts.append(parent_post)
     
     # Process each section -> child post
