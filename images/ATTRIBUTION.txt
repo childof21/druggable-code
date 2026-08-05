@@ -4,3 +4,7 @@ Image attributions (Wikimedia Commons, free licenses):
 - cryoet-tomogram.jpg — Cryo-Electron-Tomography-of-Marburg-Virus-Particles-and-Their-Morphogenesis — CC BY 2.5
 - xfel-facility.jpg — European XFEL DESY Bahrenfeld — CC BY-SA 3.0
 - alphafold-structure.jpg — TMEM253 AlphaFold Predicted Structure — CC0 (public domain)
+- images/igg-antibody.png — File:IgG antibody.svg — CC0
+- images/96well-plate.png — File:96 Well Plate (NIH BioArt 7).png — Public domain
+- images/myoglobin-ribbon.png — File:Myoglobin.png — Public domain
+- images/antibody-nih.png — File:Antibody (NIH BioArt 17 - 626774).png — Public domain
