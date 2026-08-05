@@ -12,4 +12,5 @@ __pycache__/
 
 # OS
 .DS_Store
-Thumbs.dbposts.json.bak.*
+Thumbs.db
+posts.json.bak.*
