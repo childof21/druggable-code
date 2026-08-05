@@ -392,7 +392,7 @@ function renderPosts(filter) {
   displayParents.sort((a, b) => b.id - a.id);
 
   listEl.innerHTML = displayParents.map(parent => {
-    const childPosts = (children[parent.id] || []).sort((a, b) => b.id - a.id);
+    const childPosts = (children[parent.id] || []).sort((a, b) => (a.seriesPart || a.id) - (b.seriesPart || b.id));
     const hasChildren = childPosts.length > 0;
     const isChildMatched = filter !== 'all' && childPosts.some(c => filteredChildIds.has(c.id));
 
