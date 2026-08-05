@@ -149,7 +149,8 @@ Output ONLY valid JSON."""
                         enhanced = meta.get("enhanced_text", chunk)
                     except json.JSONDecodeError as e:
                         log.error(f"Failed to parse AI response: {e}")
-                        enhanced = content or chunk
+                        # Never leak raw JSON — keep the ORIGINAL chunk text
+                        enhanced = chunk
                         meta = {"title": "📄 پست جدید", "titleEn": "", "tags": ["عمومی"]}
                 else:
                     # Continuation chunk - try JSON, else plain text
@@ -157,7 +158,7 @@ Output ONLY valid JSON."""
                         parsed = json.loads(content)
                         enhanced = parsed.get("enhanced_text", content)
                     except json.JSONDecodeError:
-                        enhanced = content
+                        enhanced = chunk
                 
                 if enhanced:
                     all_enhanced.append(enhanced)
@@ -175,6 +176,8 @@ Output ONLY valid JSON."""
         enhanced += f"\n\n---\n\n📄 <strong>مطالعه کامل (PDF اصلی):</strong> <a href=\"{pdf_link}\">دانلود و مطالعه مستقیم</a>"
     
     enhanced = enhanced.strip()
+    # Convert AI HTML block tags (<h2>/<h3>/<p>) to parser-friendly markers
+    enhanced = html_block_tags_to_markdown(enhanced)
     
     # Parse the enhanced text into content blocks
     content_blocks = []
@@ -458,7 +461,10 @@ Return JSON with title, tags, and enhanced_text:
                 meta = json.loads(content_out)
                 enhanced = meta.get("enhanced_text", section_text)
             except json.JSONDecodeError:
-                enhanced = content_out or section_text
+                # Broken JSON (unescaped quotes/newlines in the text) — NEVER leak the raw JSON.
+                # Fall back to the ORIGINAL section text so no content is lost.
+                log.warning(f"⚠️ Section '{section_title[:30]}': AI returned broken JSON — using original text ({len(section_text)} chars)")
+                enhanced = section_text
             log.info(f"✅ Section '{section_title[:40]}' rewritten ({len(enhanced)} chars)")
     except Exception as e:
         log.error(f"❌ Section '{section_title[:30]}' failed: {e}", exc_info=True)
@@ -467,8 +473,24 @@ Return JSON with title, tags, and enhanced_text:
     return meta, enhanced
 
 
+def html_block_tags_to_markdown(text):
+    """The AI is told 'use ONLY HTML tags', so it emits <h2>/<h3>/<p> block tags that the
+    markdown-style block parser doesn't understand. Convert block-level HTML to the
+    markers the parser handles (## headings, newline paragraphs). Inline HTML stays."""
+    if not text:
+        return text
+    text = re.sub(r'<h[12][^>]*>(.*?)</h[12]>', lambda m: '\n## ' + re.sub(r'<[^>]+>', '', m.group(1)).strip() + '\n', text, flags=re.S)
+    text = re.sub(r'<h3[^>]*>(.*?)</h3>', lambda m: '\n## ' + re.sub(r'<[^>]+>', '', m.group(1)).strip() + '\n', text, flags=re.S)
+    text = re.sub(r'<h4[^>]*>(.*?)</h4>', lambda m: '\n### ' + re.sub(r'<[^>]+>', '', m.group(1)).strip() + '\n', text, flags=re.S)
+    text = re.sub(r'<p[^>]*>', '\n', text)
+    text = re.sub(r'</p>', '\n', text)
+    text = re.sub(r'<br\s*/?>', '\n', text)
+    return text
+
+
 def blocks_from_text(enhanced):
     """Convert enhanced markdown-ish text into content blocks (same logic as format_with_ai)."""
+    enhanced = html_block_tags_to_markdown(enhanced)
     import re
     content_blocks = []
     current_para = []
@@ -608,10 +630,23 @@ async def publish_post(raw_text, user_info="", author="", pdf_link=""):
         meta, enhanced = await format_section_ai(ch["text"], ch["title"], part_num, total, user_info)
         if pdf_link:
             enhanced += f"\n\n---\n\n📄 <strong>مطالعه کامل (PDF اصلی):</strong> <a href=\"{pdf_link}\">دانلود و مطالعه مستقیم</a>"
+        # Normalize the title: strip AI/source junk ([1/5], بخش ششم:, leading numbers)
+        # and force a clean Persian part number prefix so series order is always readable.
+        raw_title = meta.get("title", "") or f"[{part_num}/{total}] {ch['title']}"
+        t = re.sub(r'^\s*[\[\(]?\d+\s*/\s*\d+[\]\)]?\s*[:：\-–—]?\s*', '', raw_title)          # [1/5]
+        t = re.sub(r'^\s*🔟\s*', '', t)                                                        # 🔟 emoji alone
+        t = re.sub(r'^\s*[۰-۹0-9]+\s*[\.\-–—]\s*', '', t)                                       # leading "۴." / "5." only WITH separator
+        t = re.sub(r'^\s*بخش\s*(?:[۰-۹0-9]+|اول|دوم|سوم|چهارم|پنجم|ششم|هفتم|هشتم|نهم|دهم)\s*[:：\-–—]?\s*', '', t)  # بخش 2:/بخش ششم:
+        t = re.sub(r'^\s*🔟\s*', '', t)                                                        # again after بخش strip
+        t = re.sub(r'^\s*[۰-۹0-9]+\s*[\.\-–—]\s*', '', t)                                       # again after بخش strip
+        t = re.sub(r'\s*[\(（]بخش\s*[۰-۹0-9]+\s*[\)）]\s*$', '', t)                             # trailing (بخش 1)
+        t = t.strip() or ch["title"]
+        persian_parts = {1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹', 10: '۱۰'}
+        clean_title = f"{persian_parts.get(part_num, str(part_num))}. {t}"
         child_post = {
             "id": parent_id + part_num,
             "parentId": parent_id,
-            "title": meta.get("title", f"[{part_num}/{total}] {ch['title']}"),
+            "title": clean_title,
             "tags": meta.get("tags", ["عمومی"]),
             "date": date_str,
             "lang": "fa",
@@ -768,6 +803,24 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text = '\n'.join(lines)
             log.info(f"📄 Extracted {len(text)} chars from HTML: {doc.file_name}")
             
+        elif file_name.endswith('.docx'):
+            # Extract text from DOCX — it's a ZIP containing word/document.xml
+            import zipfile, io
+            try:
+                with zipfile.ZipFile(io.BytesIO(bytes(file_bytes))) as z:
+                    xml = z.read('word/document.xml').decode('utf-8', errors='replace')
+                # Paragraph boundaries, then strip all XML tags, then unescape entities
+                xml = re.sub(r'</w:p>', '\n', xml)
+                text = re.sub(r'<[^>]+>', '', xml)
+                text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'")
+                lines = [l.strip() for l in text.split('\n') if l.strip()]
+                text = '\n'.join(lines)
+                log.info(f"📄 Extracted {len(text)} chars from DOCX: {doc.file_name}")
+            except Exception as e:
+                log.error(f"⚠️ DOCX extraction failed: {e}", exc_info=True)
+                await msg.edit_text("❌ استخراج متن از DOCX ناموفق بود. لطفاً PDF یا TXT بفرست.")
+                return
+
         else:
             # Try reading as text
             try:
